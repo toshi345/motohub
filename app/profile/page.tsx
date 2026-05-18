@@ -2,12 +2,14 @@
 
 import { useState } from "react";
 import PostCard from "@/components/PostCard";
+import ShareModal from "@/components/ShareModal";
 import { currentUser, mockPosts } from "@/lib/mockData";
 
 const tabs = ["投稿", "ルート", "スポット", "いいね済み"];
 
 export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState("投稿");
+  const [showShare, setShowShare] = useState(false);
 
   const userPosts = mockPosts.slice(0, 2);
 
@@ -54,10 +56,11 @@ export default function ProfilePage() {
               <button className="btn-ghost text-sm">✏️ プロフィール編集</button>
               <button className="btn-ghost text-sm">⚙️ 設定</button>
               <button
+                onClick={() => setShowShare(true)}
                 className="text-sm px-3 py-2 rounded-lg border transition-all"
                 style={{borderColor: "rgba(255,107,0,0.5)", color: "#ff6b00"}}
               >
-                🔗 プロフィールを共有
+                🔗 アプリを共有
               </button>
             </div>
           </div>
@@ -182,6 +185,9 @@ export default function ProfilePage() {
           ))}
         </div>
       </div>
+
+      {/* Share Modal */}
+      {showShare && <ShareModal onClose={() => setShowShare(false)} />}
     </div>
   );
 }
