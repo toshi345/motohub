@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { mockRoutes } from "@/lib/mockData";
+import { toast } from "@/components/Toast";
 
 const difficulties = ["すべて", "初級", "中級", "上級"];
 
@@ -134,10 +135,10 @@ export default function RoutesPage() {
                   🤍 {route.likes}
                 </button>
                 <div className="flex gap-2">
-                  <button className="text-xs btn-ghost py-2 px-4">
+                  <button onClick={() => { navigator.clipboard?.writeText("https://motohub-psi.vercel.app"); toast("🔗 URLをコピーしました"); }} className="text-xs btn-ghost py-2 px-4">
                     🔗 共有
                   </button>
-                  <button className="text-xs btn-primary py-2 px-4">
+                  <button onClick={() => toast("📍 ルート詳細は近日公開予定です", "soon")} className="text-xs btn-primary py-2 px-4">
                     詳細を見る
                   </button>
                 </div>

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { mockSpots } from "@/lib/mockData";
+import { toast } from "@/components/Toast";
 
 const categories = ["すべて", "道の駅", "峠", "絶景", "グルメ", "温泉"];
 
@@ -138,7 +139,7 @@ export default function SpotsPage() {
                 ) : (
                   <p className="text-sm text-gray-500">まだクチコミがありません。最初の投稿者になりましょう！</p>
                 )}
-                <button className="btn-primary w-full text-sm mt-2">
+                <button onClick={() => toast("✏️ クチコミ投稿は近日公開予定です", "soon")} className="btn-primary w-full text-sm mt-2">
                   ✏️ クチコミを書く
                 </button>
               </div>

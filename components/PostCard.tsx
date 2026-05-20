@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Post } from "@/lib/types";
+import { toast } from "@/components/Toast";
 
 function timeAgo(dateStr: string) {
   const diff = Date.now() - new Date(dateStr).getTime();
@@ -140,11 +141,16 @@ export default function PostCard({ post }: { post: Post }) {
             <span className="text-lg">{liked ? "❤️" : "🤍"}</span>
             <span>{likeCount}</span>
           </button>
-          <button className="flex items-center gap-2 text-sm text-gray-500 hover:text-blue-400 transition-colors py-1">
+          <button onClick={() => toast("💬 コメント機能は近日公開予定です", "soon")} className="flex items-center gap-2 text-sm text-gray-500 hover:text-blue-400 transition-colors py-1">
             <span className="text-lg">💬</span>
             <span>{post.comments}</span>
           </button>
-          <button className="flex items-center gap-2 text-sm text-gray-500 hover:text-green-400 transition-colors py-1">
+          <button
+            onClick={() => {
+              navigator.clipboard?.writeText(`https://motohub-psi.vercel.app`);
+              toast("🔗 URLをコピーしました");
+            }}
+            className="flex items-center gap-2 text-sm text-gray-500 hover:text-green-400 transition-colors py-1">
             <span className="text-lg">🔗</span>
             <span>共有</span>
           </button>

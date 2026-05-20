@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import GPSTracker from "@/components/GPSTracker";
+import Toast from "@/components/Toast";
 
 export const metadata: Metadata = {
   title: "MotoHub - バイク乗りのコミュニティ",
@@ -25,6 +26,7 @@ export default function RootLayout({
         </footer>
         {/* GPS floating tracker — always visible */}
         <GPSTracker />
+        <Toast />
       </body>
     </html>
   );

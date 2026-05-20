@@ -1,15 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import PostCard from "@/components/PostCard";
 import ShareModal from "@/components/ShareModal";
-import { currentUser, mockPosts } from "@/lib/mockData";
+import ProfileEditModal, { loadProfile, ProfileData } from "@/components/ProfileEditModal";
+import SettingsModal from "@/components/SettingsModal";
+import { mockPosts } from "@/lib/mockData";
 
 const tabs = ["投稿", "ルート", "スポット", "いいね済み"];
 
 export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState("投稿");
   const [showShare, setShowShare] = useState(false);
+  const [showEdit, setShowEdit] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+  const [profile, setProfile] = useState<ProfileData | null>(null);
+
+  useEffect(() => { setProfile(loadProfile()); }, []);
 
   const userPosts = mockPosts.slice(0, 2);
 
@@ -30,31 +37,31 @@ export default function ProfilePage() {
           {/* Info */}
           <div className="flex-1 text-center sm:text-left">
             <div className="flex items-center justify-center sm:justify-start gap-2 mb-1">
-              <h1 className="text-2xl font-black">{currentUser.name}</h1>
+              <h1 className="text-2xl font-black">{profile?.name ?? "ライダー山田"}</h1>
             </div>
-            <p className="text-[#ff6b00] font-medium mb-1">🏍️ {currentUser.bike}</p>
-            <p className="text-gray-400 text-sm mb-4">全国ツーリング中🏍️ | 関東在住 | ソロツーリング大好き</p>
+            <p className="text-[#ff6b00] font-medium mb-1">🏍️ {profile?.bike ?? "Honda CB650R"}</p>
+            <p className="text-gray-400 text-sm mb-4">{profile?.bio ?? "全国ツーリング中🏍️ | 関東在住 | ソロツーリング大好き"}</p>
 
             {/* Stats */}
             <div className="flex gap-6 justify-center sm:justify-start mb-4">
               <div className="text-center">
-                <div className="text-xl font-black">{currentUser.postsCount}</div>
+                <div className="text-xl font-black">42</div>
                 <div className="text-xs text-gray-500">投稿</div>
               </div>
               <div className="text-center">
-                <div className="text-xl font-black">{currentUser.followersCount}</div>
+                <div className="text-xl font-black">248</div>
                 <div className="text-xs text-gray-500">フォロワー</div>
               </div>
               <div className="text-center">
-                <div className="text-xl font-black">{currentUser.followingCount}</div>
+                <div className="text-xl font-black">103</div>
                 <div className="text-xs text-gray-500">フォロー中</div>
               </div>
             </div>
 
             {/* Action buttons */}
             <div className="flex gap-2 justify-center sm:justify-start flex-wrap">
-              <button className="btn-ghost text-sm">✏️ プロフィール編集</button>
-              <button className="btn-ghost text-sm">⚙️ 設定</button>
+              <button onClick={() => setShowEdit(true)} className="btn-ghost text-sm">✏️ プロフィール編集</button>
+              <button onClick={() => setShowSettings(true)} className="btn-ghost text-sm">⚙️ 設定</button>
               <button
                 onClick={() => setShowShare(true)}
                 className="text-sm px-3 py-2 rounded-lg border transition-all"
@@ -186,8 +193,10 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      {/* Share Modal */}
+      {/* Modals */}
       {showShare && <ShareModal onClose={() => setShowShare(false)} />}
+      {showEdit && <ProfileEditModal onClose={() => setShowEdit(false)} onSave={(data) => setProfile(data)} />}
+      {showSettings && <SettingsModal onClose={() => setShowSettings(false)} />}
     </div>
   );
 }
