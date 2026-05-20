@@ -5,7 +5,7 @@ import PostCard from "@/components/PostCard";
 import ShareModal from "@/components/ShareModal";
 import ProfileEditModal, { loadProfile, ProfileData } from "@/components/ProfileEditModal";
 import SettingsModal from "@/components/SettingsModal";
-import { mockPosts } from "@/lib/mockData";
+import { currentUser, mockPosts } from "@/lib/mockData";
 
 const tabs = ["投稿", "ルート", "スポット", "いいね済み"];
 
