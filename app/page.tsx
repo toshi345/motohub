@@ -4,6 +4,7 @@ import { useState } from "react";
 import PostCard from "@/components/PostCard";
 import { mockPosts } from "@/lib/mockData";
 import { Post } from "@/lib/types";
+import { toast } from "@/components/Toast";
 
 const filters = ["すべて", "フォト", "ルート", "スポット"];
 
@@ -118,7 +119,8 @@ export default function HomePage() {
               {trendingTags.map((tag) => (
                 <button
                   key={tag}
-                  className="text-sm px-2 py-1 rounded transition-colors"
+                  onClick={() => toast(`${tag} の検索機能は近日公開予定です`, "soon")}
+                  className="text-sm px-2 py-1 rounded transition-colors hover:opacity-80"
                   style={{color: "#ff6b00"}}
                 >
                   {tag}
@@ -165,7 +167,10 @@ export default function HomePage() {
                     <div className="text-xs text-gray-500 mt-0.5">{u.bike}</div>
                   </div>
                   <div className="text-xs text-gray-500">{u.followers}</div>
-                  <button className="text-xs px-3 py-1.5 rounded-lg transition-colors border" style={{color: "#ff6b00", borderColor: "rgba(255,107,0,0.5)"}}>
+                  <button
+                    onClick={() => toast("👤 フォロー機能は近日公開予定です", "soon")}
+                    className="text-xs px-3 py-1.5 rounded-lg transition-colors border"
+                    style={{color: "#ff6b00", borderColor: "rgba(255,107,0,0.5)"}}>
                     フォロー
                   </button>
                 </div>

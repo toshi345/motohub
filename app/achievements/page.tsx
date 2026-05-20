@@ -80,10 +80,13 @@ export default function AchievementsPage() {
   const [achievements, setAchievements] = useState<Achievement[]>([]);
   const [filter, setFilter] = useState("all");
   const [showUnlockedOnly, setShowUnlockedOnly] = useState(false);
+  const [stats, setStats] = useState({ totalDistanceKm: 0, totalRides: 0, maxSpeedKmh: 0 });
 
   useEffect(() => {
     const sessions = loadSessions();
     setAchievements(evaluateAchievements(sessions));
+    const s = calcStats(sessions);
+    setStats({ totalDistanceKm: s.totalDistanceKm, totalRides: s.totalRides, maxSpeedKmh: s.maxSpeedKmh });
   }, []);
 
   const unlocked = achievements.filter((a) => a.unlockedAt);
@@ -101,8 +104,6 @@ export default function AchievementsPage() {
     });
   };
 
-  const sessions = typeof window !== "undefined" ? loadSessions() : [];
-  const stats = calcStats(sessions);
   const pct = achievements.length > 0 ? Math.round((unlocked.length / achievements.length) * 100) : 0;
 
   return (

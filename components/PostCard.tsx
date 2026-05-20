@@ -155,7 +155,9 @@ export default function PostCard({ post }: { post: Post }) {
             <span>共有</span>
           </button>
           <div className="flex-1" />
-          <button className="text-gray-500 hover:text-gray-300 text-xl transition-colors px-1 py-1">
+          <button
+            onClick={() => toast("📋 メニュー機能は近日公開予定です", "soon")}
+            className="text-gray-500 hover:text-gray-300 text-xl transition-colors px-1 py-1">
             ⋯
           </button>
         </div>

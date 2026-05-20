@@ -74,15 +74,17 @@ export default function FuelPage() {
 
   useEffect(() => { refresh(); }, [selectedBikeId]);
 
-  // Auto-calculate total or unit price
+  // Auto-calculate total or unit price (NaN guard付き)
   useEffect(() => {
     const l = parseFloat(form.liters);
     const p = parseFloat(form.pricePerLiter);
     const t = parseFloat(form.totalCost);
-    if (!isNaN(l) && !isNaN(p) && autoCalc !== "total") {
-      setForm((f) => ({ ...f, totalCost: Math.round(l * p).toString() }));
-    } else if (!isNaN(l) && !isNaN(t) && l > 0 && autoCalc !== "unit") {
-      setForm((f) => ({ ...f, pricePerLiter: Math.round(t / l).toString() }));
+    if (!isNaN(l) && l > 0 && !isNaN(p) && p > 0 && autoCalc !== "total") {
+      const total = Math.round(l * p);
+      if (isFinite(total)) setForm((f) => ({ ...f, totalCost: total.toString() }));
+    } else if (!isNaN(l) && l > 0 && !isNaN(t) && t > 0 && autoCalc !== "unit") {
+      const unit = Math.round(t / l);
+      if (isFinite(unit)) setForm((f) => ({ ...f, pricePerLiter: unit.toString() }));
     }
   }, [form.liters, form.pricePerLiter, form.totalCost]);
 

@@ -19,6 +19,15 @@ function Stars({ n }: { n: number }) {
 export default function RoutesPage() {
   const [filter, setFilter] = useState("すべて");
   const [search, setSearch] = useState("");
+  const [likedRoutes, setLikedRoutes] = useState<Set<string>>(new Set());
+
+  const toggleLike = (id: string) => {
+    setLikedRoutes((prev) => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  };
 
   const filtered = mockRoutes.filter((r) => {
     const matchDiff =
@@ -131,8 +140,12 @@ export default function RoutesPage() {
 
               {/* Actions */}
               <div className="flex items-center justify-between pt-3 border-t border-[#252535]">
-                <button className="flex items-center gap-2 text-sm text-gray-500 hover:text-red-400 transition-colors py-1">
-                  🤍 {route.likes}
+                <button
+                  onClick={() => toggleLike(route.id)}
+                  className="flex items-center gap-2 text-sm transition-colors py-1"
+                  style={{ color: likedRoutes.has(route.id) ? "#f87171" : "#6b7280" }}
+                >
+                  {likedRoutes.has(route.id) ? "❤️" : "🤍"} {route.likes + (likedRoutes.has(route.id) ? 1 : 0)}
                 </button>
                 <div className="flex gap-2">
                   <button onClick={() => { navigator.clipboard?.writeText("https://motohub-psi.vercel.app"); toast("🔗 URLをコピーしました"); }} className="text-xs btn-ghost py-2 px-4">
