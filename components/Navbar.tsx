@@ -56,9 +56,23 @@ const myMenuItems = [
   { href: "/profile",     label: "プロフィール",   icon: "👤" },
 ];
 
+const allNavItems = [
+  { href: "/",            label: "フィード",        icon: "🏠", group: "メイン" },
+  { href: "/routes",      label: "ルート",           icon: "🗺️", group: "メイン" },
+  { href: "/spots",       label: "スポット",         icon: "📍", group: "メイン" },
+  { href: "/create",      label: "投稿する",         icon: "✏️", group: "メイン" },
+  { href: "/riding-log",  label: "走行ログ",         icon: "📊", group: "個人機能" },
+  { href: "/garage",      label: "マイガレージ",     icon: "🏍️", group: "個人機能" },
+  { href: "/fuel",        label: "燃費管理",         icon: "⛽", group: "個人機能" },
+  { href: "/expenses",    label: "費用管理",         icon: "💴", group: "個人機能" },
+  { href: "/achievements",label: "実績・バッジ",     icon: "🏆", group: "個人機能" },
+  { href: "/profile",     label: "プロフィール",     icon: "👤", group: "個人機能" },
+];
+
 export default function Navbar() {
   const pathname = usePathname();
   const [myMenuOpen, setMyMenuOpen] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const [visible, setVisible] = useState(true);
   const [atTop, setAtTop] = useState(true);
   const lastScrollY = useRef(0);
@@ -165,7 +179,7 @@ export default function Navbar() {
               </svg>
               投稿する
             </Link>
-            <Link href="/profile" className="shrink-0">
+            <Link href="/profile" className="hidden md:block shrink-0">
               <img
                 src="https://api.dicebear.com/7.x/adventurer/svg?seed=Yamada&backgroundColor=b6e3f4"
                 alt="avatar"
@@ -175,9 +189,99 @@ export default function Navbar() {
                 onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.borderColor = "#1e1e35"; }}
               />
             </Link>
+
+            {/* ハンバーガーボタン（モバイルのみ） */}
+            <button
+              className="md:hidden flex flex-col justify-center gap-1.5 w-9 h-9 items-center"
+              onClick={() => setDrawerOpen(true)}
+              aria-label="メニュー"
+            >
+              <span style={{ display: "block", width: "20px", height: "2px", background: "#a0a0c0", borderRadius: "2px", transition: "all 0.2s" }} />
+              <span style={{ display: "block", width: "20px", height: "2px", background: "#a0a0c0", borderRadius: "2px", transition: "all 0.2s" }} />
+              <span style={{ display: "block", width: "14px", height: "2px", background: "#a0a0c0", borderRadius: "2px", transition: "all 0.2s" }} />
+            </button>
           </div>
         </div>
       </nav>
+
+      {/* ── ドロワーメニュー（モバイル） ── */}
+      {drawerOpen && (
+        <>
+          {/* オーバーレイ */}
+          <div
+            className="md:hidden fixed inset-0 z-[60]"
+            style={{ background: "rgba(0,0,0,0.6)", backdropFilter: "blur(4px)" }}
+            onClick={() => setDrawerOpen(false)}
+          />
+          {/* ドロワー本体 */}
+          <div
+            className="md:hidden fixed top-0 right-0 bottom-0 z-[70] w-72"
+            style={{
+              background: "#0d0d18",
+              borderLeft: "1px solid rgba(255,255,255,0.08)",
+              boxShadow: "-8px 0 32px rgba(0,0,0,0.5)",
+              animation: "slideInRight 0.25s ease",
+              overflowY: "auto",
+            }}
+          >
+            {/* ドロワーヘッダー */}
+            <div className="flex items-center justify-between p-5 border-b" style={{ borderColor: "rgba(255,255,255,0.08)" }}>
+              <div className="flex items-center gap-2">
+                <span className="text-xl">🏍️</span>
+                <span className="font-black text-lg" style={{ color: "#ff6b00" }}>MotoHub</span>
+              </div>
+              <button onClick={() => setDrawerOpen(false)} style={{ width: "32px", height: "32px", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", color: "#a0a0c0", fontSize: "16px", cursor: "pointer" }}>
+                ✕
+              </button>
+            </div>
+
+            {/* ナビアイテム */}
+            <div className="p-4 space-y-1">
+              {["メイン", "個人機能"].map((group) => (
+                <div key={group}>
+                  <p className="text-xs font-bold uppercase tracking-wider px-3 py-2" style={{ color: "#5a5a7a" }}>{group}</p>
+                  {allNavItems.filter((i) => i.group === group).map((item) => {
+                    const active = pathname === item.href;
+                    return (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        onClick={() => setDrawerOpen(false)}
+                        style={{
+                          display: "flex", alignItems: "center", gap: "12px",
+                          padding: "12px 16px", borderRadius: "10px",
+                          color: active ? "#ff6b00" : "#a0a0c0",
+                          background: active ? "rgba(255,107,0,0.1)" : "transparent",
+                          textDecoration: "none", fontWeight: active ? 700 : 500,
+                          fontSize: "15px", marginBottom: "2px",
+                        }}
+                      >
+                        <span style={{ fontSize: "20px", width: "28px", textAlign: "center" }}>{item.icon}</span>
+                        {item.label}
+                        {active && <span style={{ marginLeft: "auto", width: "6px", height: "6px", borderRadius: "50%", background: "#ff6b00", flexShrink: 0 }} />}
+                      </Link>
+                    );
+                  })}
+                </div>
+              ))}
+            </div>
+
+            {/* プロフィールリンク */}
+            <div className="p-4 border-t" style={{ borderColor: "rgba(255,255,255,0.08)" }}>
+              <Link href="/profile" onClick={() => setDrawerOpen(false)}
+                className="flex items-center gap-3 p-3 rounded-xl"
+                style={{ background: "rgba(255,255,255,0.04)" }}>
+                <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Yamada&backgroundColor=b6e3f4" alt="avatar" className="w-10 h-10 rounded-full" />
+                <div>
+                  <div className="text-sm font-bold">ライダー山田</div>
+                  <div className="text-xs" style={{ color: "#ff6b00" }}>Honda CB650R</div>
+                </div>
+              </Link>
+            </div>
+          </div>
+          <style>{`@keyframes slideInRight { from { transform: translateX(100%); } to { transform: translateX(0); } }`}</style>
+        </>
+      )}
 
       {/* ── Mobile bottom nav ── */}
       <nav

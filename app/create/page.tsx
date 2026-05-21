@@ -60,6 +60,7 @@ function CreateForm() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [dragOver, setDragOver] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const illustTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Load drafts and GPS sessions on mount
   useEffect(() => {
@@ -158,11 +159,24 @@ function CreateForm() {
 
   const generateIllust = () => {
     if (images.length === 0) return;
+    // 毎回リセットしてから生成（再生成対応）
+    setIllustResult(null);
     setIllustLoading(true);
-    setTimeout(() => {
+    if (illustTimerRef.current) clearTimeout(illustTimerRef.current);
+    illustTimerRef.current = setTimeout(() => {
       setIllustResult(images[0]);
       setIllustLoading(false);
+      illustTimerRef.current = null;
     }, 2500);
+  };
+
+  const cancelIllust = () => {
+    if (illustTimerRef.current) {
+      clearTimeout(illustTimerRef.current);
+      illustTimerRef.current = null;
+    }
+    setIllustLoading(false);
+    setIllustResult(null);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -183,7 +197,7 @@ function CreateForm() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-4 pb-24 md:pb-8 pt-6">
+    <div className="max-w-2xl mx-auto px-4 pb-32 md:pb-10 pt-6">
       {/* Header */}
       <div className="flex items-start justify-between mb-6">
         <div>
@@ -366,8 +380,13 @@ function CreateForm() {
         {/* AI Illustration */}
         {images.length > 0 && (
           <div className="card p-5" style={{borderColor:"rgba(147,51,234,0.3)", background:"linear-gradient(135deg, rgba(147,51,234,0.08) 0%, rgba(79,70,229,0.04) 100%)"}}>
-            <div className="flex items-center justify-between mb-3">
-              <div>
+            {/* Header - 開閉ボタンを大きく明確に */}
+            <button
+              type="button"
+              onClick={() => { setShowIllust(!showIllust); if (showIllust) cancelIllust(); }}
+              className="w-full flex items-center justify-between"
+            >
+              <div className="text-left">
                 <h3 className="font-bold flex items-center gap-2">
                   🎨 AIイラスト変換
                   <span className="text-xs px-2 py-0.5 rounded-full font-semibold" style={{background:"rgba(147,51,234,0.2)", color:"#c084fc"}}>
@@ -376,15 +395,24 @@ function CreateForm() {
                 </h3>
                 <p className="text-xs text-gray-500 mt-0.5">顔・ナンバープレートを隠したいときに便利</p>
               </div>
-              <button type="button" onClick={() => setShowIllust(!showIllust)} className="text-sm text-purple-400">
-                {showIllust ? "▲" : "▼"}
-              </button>
-            </div>
+              {/* 大きくて分かりやすい開閉ボタン */}
+              <div style={{
+                padding: "8px 14px", borderRadius: "8px", fontSize: "13px", fontWeight: 700,
+                background: showIllust ? "rgba(147,51,234,0.25)" : "rgba(147,51,234,0.12)",
+                color: "#c084fc", border: "1px solid rgba(147,51,234,0.4)",
+                display: "flex", alignItems: "center", gap: "6px", flexShrink: 0,
+              }}>
+                {showIllust ? "▲ 閉じる" : "▼ 開いて変換"}
+              </div>
+            </button>
+
             {showIllust && (
-              <div className="space-y-4">
+              <div className="space-y-4 mt-4">
+                {/* スタイル選択 */}
                 <div className="grid grid-cols-2 gap-2">
                   {illustStyles.map((s) => (
-                    <button key={s.key} type="button" onClick={() => setIllustStyle(s.key)}
+                    <button key={s.key} type="button"
+                      onClick={() => { setIllustStyle(s.key); setIllustResult(null); }}
                       className={`p-3 rounded-lg text-left border transition-all ${
                         illustStyle === s.key ? "border-purple-500 bg-purple-500/20" : "border-[#252535] hover:border-purple-500/50"
                       }`}>
@@ -394,14 +422,33 @@ function CreateForm() {
                     </button>
                   ))}
                 </div>
-                <button type="button" onClick={generateIllust} disabled={illustLoading}
-                  className="w-full py-3 rounded-lg font-medium transition-all text-white"
-                  style={{background: illustLoading ? "#4a4a5a" : "linear-gradient(135deg, #7c3aed, #4f46e5)"}}>
-                  {illustLoading ? <span className="flex items-center justify-center gap-2"><span className="animate-spin">⚙️</span> AI生成中...</span> : "🎨 AIイラストを生成する"}
-                </button>
-                {illustResult && (
-                  <div className="space-y-2">
-                    <p className="text-sm text-green-400 font-medium">✅ 生成完了！</p>
+
+                {/* 生成・取消ボタン */}
+                <div className="flex gap-2">
+                  <button type="button" onClick={generateIllust} disabled={illustLoading}
+                    className="flex-1 py-3 rounded-lg font-bold transition-all text-white"
+                    style={{background: illustLoading ? "#4a4a5a" : "linear-gradient(135deg, #7c3aed, #4f46e5)", opacity: illustLoading ? 0.7 : 1}}>
+                    {illustLoading
+                      ? <span className="flex items-center justify-center gap-2"><span className="animate-spin">⚙️</span> AI生成中...</span>
+                      : illustResult ? "🔄 再生成する" : "🎨 AIイラストを生成する"}
+                  </button>
+                  {/* 取消・生成中止ボタン */}
+                  {(illustLoading || illustResult) && (
+                    <button type="button" onClick={cancelIllust}
+                      className="px-4 py-3 rounded-lg font-bold text-sm transition-all"
+                      style={{background: "rgba(239,68,68,0.12)", border: "1px solid rgba(239,68,68,0.4)", color: "#f87171"}}>
+                      {illustLoading ? "⏹ 中止" : "🗑 削除"}
+                    </button>
+                  )}
+                </div>
+
+                {/* 生成結果 */}
+                {illustResult && !illustLoading && (
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm text-green-400 font-bold">✅ 生成完了！</p>
+                      <span className="text-xs text-gray-500">（{illustStyles.find(s=>s.key===illustStyle)?.label}）</span>
+                    </div>
                     <div className="grid grid-cols-2 gap-3">
                       <div>
                         <p className="text-xs text-gray-500 mb-1">元の写真</p>
@@ -412,7 +459,7 @@ function CreateForm() {
                         <img src={illustResult} alt="illust" className="w-full h-32 object-cover rounded-lg" style={{filter:"saturate(1.8) contrast(1.2) hue-rotate(10deg)"}} />
                       </div>
                     </div>
-                    <label className="flex items-center gap-2 cursor-pointer">
+                    <label className="flex items-center gap-2 cursor-pointer p-3 rounded-lg" style={{background:"rgba(147,51,234,0.1)"}}>
                       <input type="checkbox" className="w-auto" defaultChecked />
                       <span className="text-sm">イラスト版で投稿する（元写真は非公開）</span>
                     </label>
@@ -572,8 +619,8 @@ function CreateForm() {
           )}
         </div>
 
-        {/* Submit */}
-        <div className="flex gap-3 pt-2">
+        {/* Submit - ボトムナビとの重なり防止で余白を十分に取る */}
+        <div className="flex gap-3 pt-2 pb-4">
           <button type="button" onClick={manualSaveDraft} className="btn-ghost px-4 py-3 text-sm">
             💾 下書き
           </button>
