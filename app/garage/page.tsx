@@ -7,8 +7,28 @@ import {
   getMaintenanceStatus, MAINTENANCE_LABELS, MOCK_BIKES,
 } from "@/lib/garage";
 import { loadSessions } from "@/lib/gps";
+import {
+  BikeIcon, OilIcon, TireIcon, WrenchIcon, FuelIcon,
+  BatteryIcon, SettingsIcon,
+} from "@/components/Icons";
 
 const BIKE_COLORS = ["#cc3300", "#003399", "#006600", "#cc6600", "#330066", "#222222", "#888888", "#ffffff"];
+
+function MaintenanceTypeIcon({ type }: { type: MaintenanceType }) {
+  const props = { size: 16, color: "currentColor" };
+  switch (type) {
+    case "oil": return <OilIcon {...props} />;
+    case "tire_front":
+    case "tire_rear": return <TireIcon {...props} />;
+    case "chain": return <WrenchIcon {...props} />;
+    case "brake_front":
+    case "brake_rear": return <WrenchIcon {...props} />;
+    case "coolant": return <FuelIcon {...props} />;
+    case "battery": return <BatteryIcon {...props} />;
+    case "filter": return <SettingsIcon {...props} />;
+    default: return <WrenchIcon {...props} />;
+  }
+}
 
 function BikeColorDot({ color }: { color: string }) {
   return <span className="inline-block w-4 h-4 rounded-full border border-white/20" style={{ background: color }} />;
@@ -37,7 +57,7 @@ function MaintenanceItem({ record, currentKm, onEdit, onDelete }: {
   return (
     <div className={`p-3 rounded-xl border transition-colors ${urgency === "overdue" ? "border-red-500/50 bg-red-500/5" : urgency === "urgent" ? "border-yellow-500/50 bg-yellow-500/5" : "border-[#252535]"}`}>
       <div className="flex items-center gap-2 mb-1.5">
-        <span className="text-base">{meta.icon}</span>
+        <MaintenanceTypeIcon type={record.type} />
         <span className="font-medium text-sm flex-1">{meta.label}</span>
         {urgency === "overdue" && <span className="tag bg-red-500/20 text-red-400">⚠️ 超過</span>}
         {urgency === "urgent" && <span className="tag bg-yellow-500/20 text-yellow-400">⚡ 要注意</span>}
@@ -173,7 +193,7 @@ export default function GaragePage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-3xl font-black mb-1">🏍️ マイガレージ</h1>
+          <h1 className="text-3xl font-black mb-1 flex items-center gap-2"><BikeIcon size={28} color="#ff6b00" /> マイガレージ</h1>
           <p className="text-gray-400 text-sm">愛車管理・メンテナンス記録</p>
         </div>
         <button onClick={openAddBike} className="btn-primary">＋ 愛車を追加</button>
@@ -211,8 +231,8 @@ export default function GaragePage() {
           {/* Bike detail header */}
           <div className="card p-5 mb-5">
             <div className="flex items-start gap-4">
-              <div className="w-16 h-16 rounded-xl flex items-center justify-center text-4xl shrink-0" style={{ background: `${selected.color}22`, border: `2px solid ${selected.color}55` }}>
-                🏍️
+              <div className="w-16 h-16 rounded-xl flex items-center justify-center shrink-0" style={{ background: `${selected.color}22`, border: `2px solid ${selected.color}55` }}>
+                <BikeIcon size={36} color={selected.color} />
               </div>
               <div className="flex-1">
                 <div className="flex items-center gap-2 flex-wrap">

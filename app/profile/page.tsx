@@ -1,11 +1,15 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import PostCard from "@/components/PostCard";
 import ShareModal from "@/components/ShareModal";
 import ProfileEditModal, { loadProfile, ProfileData, getAvatarUrl } from "@/components/ProfileEditModal";
 import SettingsModal from "@/components/SettingsModal";
 import { mockPosts } from "@/lib/mockData";
+import {
+  ChartIcon, BikeIcon, FuelIcon, MoneyIcon, TrophyIcon, MapIcon,
+  PinIcon, HeartIcon,
+} from "@/components/Icons";
 
 const tabs = ["投稿", "ルート", "スポット", "いいね済み"];
 
@@ -164,20 +168,20 @@ export default function ProfilePage() {
 
       {/* Quick links to new features */}
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-8">
-        {[
-          { href: "/riding-log", icon: "📊", label: "走行ログ", desc: "記録・統計" },
-          { href: "/garage", icon: "🏍️", label: "マイガレージ", desc: "愛車・メンテ" },
-          { href: "/fuel", icon: "⛽", label: "燃費管理", desc: "給油・燃費計算" },
-          { href: "/expenses", icon: "💴", label: "費用管理", desc: "コスト分析" },
-          { href: "/achievements", icon: "🏆", label: "実績・バッジ", desc: "コレクション" },
-          { href: "/riding-log", icon: "📚", label: "ルートライブラリ", desc: "保存ルート" },
-        ].map((item) => (
+        {([
+          { href: "/riding-log", icon: <ChartIcon size={36} color="#ff6b00" />, label: "走行ログ", desc: "記録・統計" },
+          { href: "/garage", icon: <BikeIcon size={36} color="#ff6b00" />, label: "マイガレージ", desc: "愛車・メンテ" },
+          { href: "/fuel", icon: <FuelIcon size={36} color="#ff6b00" />, label: "燃費管理", desc: "給油・燃費計算" },
+          { href: "/expenses", icon: <MoneyIcon size={36} color="#ff6b00" />, label: "費用管理", desc: "コスト分析" },
+          { href: "/achievements", icon: <TrophyIcon size={36} color="#ff6b00" />, label: "実績・バッジ", desc: "コレクション" },
+          { href: "/riding-log", icon: <MapIcon size={36} color="#ff6b00" />, label: "ルートライブラリ", desc: "保存ルート" },
+        ] as { href: string; icon: React.ReactNode; label: string; desc: string }[]).map((item) => (
           <a
-            key={item.href}
+            key={item.label}
             href={item.href}
             className="card p-5 text-center hover:border-[#ff6b00] transition-all hover:-translate-y-0.5 group"
           >
-            <div className="text-4xl mb-3 group-hover:scale-110 transition-transform">{item.icon}</div>
+            <div className="flex justify-center mb-3 group-hover:scale-110 transition-transform">{item.icon}</div>
             <div className="text-sm font-bold mb-1">{item.label}</div>
             <div className="text-xs text-gray-500">{item.desc}</div>
           </a>
@@ -186,16 +190,16 @@ export default function ProfilePage() {
 
       {/* Activity stats */}
       <div className="card p-6 mt-5">
-        <h2 className="font-bold mb-5">📊 アクティビティ</h2>
+        <h2 className="font-bold mb-5 flex items-center gap-2"><ChartIcon size={18} color="#ff6b00" /> アクティビティ</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {[
-            { icon: "🏍️", label: "走行距離", value: "18,450km" },
-            { icon: "🗺️", label: "ルート投稿", value: "8本" },
-            { icon: "📍", label: "スポット登録", value: "12箇所" },
-            { icon: "❤️", label: "いいね獲得", value: "1,284" },
-          ].map((stat) => (
+          {([
+            { icon: <BikeIcon size={24} color="#ff6b00" />, label: "走行距離", value: "18,450km" },
+            { icon: <MapIcon size={24} color="#ff6b00" />, label: "ルート投稿", value: "8本" },
+            { icon: <PinIcon size={24} color="#ff6b00" />, label: "スポット登録", value: "12箇所" },
+            { icon: <HeartIcon size={24} color="#ff6b00" />, label: "いいね獲得", value: "1,284" },
+          ] as { icon: React.ReactNode; label: string; value: string }[]).map((stat) => (
             <div key={stat.label} className="bg-[#1a1a25] rounded-xl p-4 text-center">
-              <div className="text-2xl mb-1">{stat.icon}</div>
+              <div className="flex justify-center mb-1">{stat.icon}</div>
               <div className="font-black text-lg" style={{color: "#ff6b00"}}>{stat.value}</div>
               <div className="text-xs text-gray-500">{stat.label}</div>
             </div>

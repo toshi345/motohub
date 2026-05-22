@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { loadSessions } from "@/lib/gps";
 import { evaluateAchievements, calcStats, Achievement, rarityColor, rarityLabel, rarityBorder } from "@/lib/achievements";
+import { RulerIcon, BikeIcon, SpeedIcon } from "@/components/Icons";
 
 function AchievementCard({ a }: { a: Achievement }) {
   const unlocked = !!a.unlockedAt;
@@ -145,14 +146,17 @@ export default function AchievementsPage() {
       {/* Riding stats summary */}
       <div className="grid grid-cols-3 gap-3 mb-6">
         <div className="card p-3 text-center">
+          <div className="flex justify-center mb-1"><RulerIcon size={20} color="#ff6b00" /></div>
           <div className="font-black" style={{ color: "#ff6b00" }}>{stats.totalDistanceKm.toFixed(0)} km</div>
           <div className="text-xs text-gray-500">累計走行距離</div>
         </div>
         <div className="card p-3 text-center">
+          <div className="flex justify-center mb-1"><BikeIcon size={20} color="#ff6b00" /></div>
           <div className="font-black" style={{ color: "#ff6b00" }}>{stats.totalRides} 回</div>
           <div className="text-xs text-gray-500">走行回数</div>
         </div>
         <div className="card p-3 text-center">
+          <div className="flex justify-center mb-1"><SpeedIcon size={20} color="#ff6b00" /></div>
           <div className="font-black" style={{ color: "#ff6b00" }}>{Math.round(stats.maxSpeedKmh)} km/h</div>
           <div className="text-xs text-gray-500">最高速度</div>
         </div>
