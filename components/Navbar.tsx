@@ -124,8 +124,31 @@ export default function Navbar() {
 
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 font-black text-xl shrink-0 group">
-            <span className="text-2xl group-hover:scale-110 transition-transform">🏍️</span>
-            <span className="text-gradient">MotoHub</span>
+            {/* シンプルSVGバイクアイコン */}
+            <svg width="32" height="22" viewBox="0 0 130 80" fill="none"
+              stroke="#ff6b00" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round"
+              className="group-hover:scale-110 transition-transform shrink-0">
+              {/* 後輪 */}
+              <circle cx="28" cy="56" r="20"/>
+              {/* 前輪 */}
+              <circle cx="102" cy="56" r="20"/>
+              {/* フレーム */}
+              <path d="M28 56 L52 22 L74 22 L96 42"/>
+              {/* シート */}
+              <path d="M48 26 L68 18 L74 22"/>
+              {/* ハンドル */}
+              <path d="M92 36 L102 36 L108 30"/>
+              {/* エンジン */}
+              <line x1="56" y1="36" x2="56" y2="56"/>
+              <line x1="56" y1="56" x2="90" y2="56"/>
+            </svg>
+            <span style={{
+              background: "linear-gradient(135deg, #ff6b00, #ff8c38)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
+              color: "#ff6b00",
+            }}>MotoHub</span>
           </Link>
 
           {/* Desktop links */}

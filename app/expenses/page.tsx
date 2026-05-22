@@ -7,6 +7,7 @@ import {
   calcExpenseSummary, MOCK_EXPENSES,
 } from "@/lib/expense";
 import { loadBikes, Bike, MOCK_BIKES, saveBike } from "@/lib/garage";
+import { MoneyIcon, FuelIcon, WrenchIcon, MapIcon } from "@/components/Icons";
 
 const PERIOD_OPTIONS = [
   { key: "month", label: "今月" },
@@ -153,7 +154,7 @@ export default function ExpensesPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-3xl font-black mb-1">💴 費用管理</h1>
+          <h1 className="text-3xl font-black mb-1 flex items-center gap-2"><MoneyIcon size={28} color="#ff6b00" className="inline-block" /> 費用管理</h1>
           <p className="text-gray-400 text-sm">バイクにかかる全費用を記録・分析</p>
         </div>
         <button onClick={openAdd} className="btn-primary">＋ 費用を記録</button>
@@ -187,22 +188,22 @@ export default function ExpensesPage() {
       {/* Summary cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
         <div className="card p-4 text-center col-span-2 md:col-span-1">
-          <div className="text-2xl mb-1">💴</div>
+          <div className="flex justify-center mb-1"><MoneyIcon size={24} color="#ff6b00" /></div>
           <div className="text-2xl font-black" style={{ color: "#ff6b00" }}>¥{summary.total.toLocaleString()}</div>
           <div className="text-xs text-gray-500">{periodLabel}の合計</div>
         </div>
         <div className="card p-4 text-center">
-          <div className="text-2xl mb-1">⛽</div>
+          <div className="flex justify-center mb-1"><FuelIcon size={24} color="#ff6b00" /></div>
           <div className="text-xl font-black" style={{ color: "#ff6b00" }}>¥{summary.byCategory.find(c=>c.category==="fuel")?.total.toLocaleString() ?? 0}</div>
           <div className="text-xs text-gray-500">燃料費</div>
         </div>
         <div className="card p-4 text-center">
-          <div className="text-2xl mb-1">🔧</div>
+          <div className="flex justify-center mb-1"><WrenchIcon size={24} color="#ff6b00" /></div>
           <div className="text-xl font-black" style={{ color: "#ff6b00" }}>¥{summary.maintenanceTotal.toLocaleString()}</div>
           <div className="text-xs text-gray-500">メンテ関連</div>
         </div>
         <div className="card p-4 text-center">
-          <div className="text-2xl mb-1">🗺️</div>
+          <div className="flex justify-center mb-1"><MapIcon size={24} color="#ff6b00" /></div>
           <div className="text-xl font-black" style={{ color: "#ff6b00" }}>¥{summary.touringTotal.toLocaleString()}</div>
           <div className="text-xs text-gray-500">ツーリング費</div>
         </div>

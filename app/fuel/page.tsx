@@ -6,6 +6,7 @@ import {
   createFuelRecord, calcFuelStats, MOCK_FUEL_RECORDS,
 } from "@/lib/fuel";
 import { loadBikes, Bike, MOCK_BIKES, saveBike } from "@/lib/garage";
+import { ChartIcon, FuelIcon, MoneyIcon } from "@/components/Icons";
 
 const emptyForm = {
   date: new Date().toISOString().slice(0, 10),
@@ -18,10 +19,12 @@ const emptyForm = {
   note: "",
 };
 
-function StatCard({ icon, label, value, sub }: { icon: string; label: string; value: string; sub?: string }) {
+function StatCard({ icon, label, value, sub, IconComp }: { icon: string; label: string; value: string; sub?: string; IconComp?: React.ComponentType<{ size?: number; color?: string }> }) {
   return (
     <div className="card p-4 text-center">
-      <div className="text-2xl mb-1">{icon}</div>
+      <div className="flex justify-center mb-1">
+        {IconComp ? <IconComp size={24} color="#ff6b00" /> : <span className="text-2xl">{icon}</span>}
+      </div>
       <div className="text-xl font-black" style={{ color: "#ff6b00" }}>{value}</div>
       <div className="text-xs text-gray-500">{label}</div>
       {sub && <div className="text-xs text-gray-600 mt-0.5">{sub}</div>}
@@ -155,7 +158,7 @@ export default function FuelPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-3xl font-black mb-1">⛽ 燃費管理</h1>
+          <h1 className="text-3xl font-black mb-1 flex items-center gap-2"><FuelIcon size={28} color="#ff6b00" className="inline-block" /> 燃費管理</h1>
           <p className="text-gray-400 text-sm">給油記録・燃費計算・コスト分析</p>
         </div>
         <button onClick={openAdd} className="btn-primary">＋ 給油記録</button>
@@ -176,10 +179,10 @@ export default function FuelPage() {
 
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
-        <StatCard icon="📊" label="平均燃費" value={stats.avgFuelEfficiency > 0 ? `${stats.avgFuelEfficiency.toFixed(1)} km/L` : "--"} />
-        <StatCard icon="⛽" label="累計給油量" value={`${stats.totalLiters.toFixed(1)} L`} />
-        <StatCard icon="💴" label="累計給油費" value={`¥${stats.totalCost.toLocaleString()}`} />
-        <StatCard icon="🔢" label="給油回数" value={`${records.length} 回`} />
+        <StatCard icon="📊" label="平均燃費" value={stats.avgFuelEfficiency > 0 ? `${stats.avgFuelEfficiency.toFixed(1)} km/L` : "--"} IconComp={ChartIcon} />
+        <StatCard icon="⛽" label="累計給油量" value={`${stats.totalLiters.toFixed(1)} L`} IconComp={FuelIcon} />
+        <StatCard icon="💴" label="累計給油費" value={`¥${stats.totalCost.toLocaleString()}`} IconComp={MoneyIcon} />
+        <StatCard icon="🔢" label="給油回数" value={`${records.length} 回`} IconComp={ChartIcon} />
       </div>
 
       {/* Cost per km */}
@@ -206,7 +209,7 @@ export default function FuelPage() {
       {/* Monthly chart */}
       {records.length > 0 && (
         <div className="card p-5 mb-5">
-          <h3 className="font-bold mb-4">💴 月別給油コスト（直近6ヶ月）</h3>
+          <h3 className="font-bold mb-4 flex items-center gap-2"><FuelIcon size={18} color="#ff6b00" /> 月別給油コスト（直近6ヶ月）</h3>
           <MiniBarChart data={monthlyData} />
         </div>
       )}

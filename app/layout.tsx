@@ -25,8 +25,12 @@ export default function RootLayout({
     <html lang="ja" className="h-full">
       <body className="min-h-full flex flex-col bg-[#0a0a0f]">
         <Navbar />
-        {/* pt-16 = トップナビ分, pb-20 md:pb-0 = ボトムナビ分 */}
-        <main className="flex-1 pt-16 pb-20 md:pb-0">
+        {/*
+          pt-20 = トップナビ(64px) + 余白(16px)
+          pb-28 = ボトムナビ(58px) + セーフエリア余裕(54px) ← iOS Safari対応
+          md:pb-0 = デスクトップはボトムナビなし
+        */}
+        <main className="flex-1 pt-20 pb-28 md:pt-20 md:pb-4">
           {children}
         </main>
         <footer className="hidden md:block border-t border-[#252535] py-6 text-center text-sm text-gray-500">

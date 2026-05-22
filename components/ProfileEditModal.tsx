@@ -31,68 +31,108 @@ const DEFAULT_PROFILE: ProfileData = {
   bikeYear: "2022",
   bikeType: "ネイキッド",
   location: "東京都",
-  avatarSeed: "Yamada",
-  avatarBg: "b6e3f4",
+  avatarSeed: "c_orange",  // デフォルト：オレンジのカラーアバター
+  avatarBg: "",
 };
 
 export function saveProfile(data: ProfileData) {
   try { localStorage.setItem(KEY, JSON.stringify(data)); } catch {}
 }
 
-// ヘルメットSVGアバター（バイク専用デザイン）
-// helmet: prefix で識別
-const HELMET_COLORS = [
-  { id: "helmet_red",    color: "#cc2200", visor: "#1a3a5c", label: "レッド" },
-  { id: "helmet_orange", color: "#ff6b00", visor: "#1a3a5c", label: "オレンジ" },
-  { id: "helmet_blue",   color: "#1a4fa0", visor: "#0a2040", label: "ブルー" },
-  { id: "helmet_black",  color: "#222222", visor: "#ff6b00", label: "ブラック" },
-  { id: "helmet_white",  color: "#e8e8e8", visor: "#1a3a5c", label: "ホワイト" },
-  { id: "helmet_green",  color: "#1a6040", visor: "#0a2a1a", label: "グリーン" },
-  { id: "helmet_yellow", color: "#d4a000", visor: "#1a1a00", label: "イエロー" },
-  { id: "helmet_silver", color: "#888888", visor: "#222244", label: "シルバー" },
-];
-
 export function isHelmet(seed: string) { return seed.startsWith("helmet_"); }
 
-export function getHelmetColor(id: string) {
-  return HELMET_COLORS.find((h) => h.id === id) ?? HELMET_COLORS[0];
-}
+// ── シンプルカラーアバター（幾何学デザイン）──────────────────────────────────
+// colorAvatar_ prefix で識別
+type ColorAvatarDef = { id: string; bg: string; fg: string; shape: string; label: string };
+const COLOR_AVATARS: ColorAvatarDef[] = [
+  { id: "c_orange", bg: "#ff6b00", fg: "#fff",    shape: "circle",   label: "オレンジ" },
+  { id: "c_blue",   bg: "#1a4fa0", fg: "#7dd3fc",  shape: "triangle", label: "ブルー" },
+  { id: "c_red",    bg: "#cc2200", fg: "#fca5a5",  shape: "diamond",  label: "レッド" },
+  { id: "c_green",  bg: "#166534", fg: "#86efac",  shape: "circle",   label: "グリーン" },
+  { id: "c_purple", bg: "#6d28d9", fg: "#c4b5fd",  shape: "triangle", label: "パープル" },
+  { id: "c_teal",   bg: "#0e7490", fg: "#67e8f9",  shape: "diamond",  label: "ティール" },
+  { id: "c_pink",   bg: "#9d174d", fg: "#f9a8d4",  shape: "circle",   label: "ピンク" },
+  { id: "c_gray",   bg: "#374151", fg: "#d1d5db",  shape: "triangle", label: "グレー" },
+];
 
-// SVGヘルメットをdata URIに変換
-export function getHelmetSvgUri(id: string): string {
-  const h = getHelmetColor(id);
+function makeColorAvatarSvg(def: ColorAvatarDef): string {
+  const shapeEl =
+    def.shape === "circle"
+      ? `<circle cx="50" cy="55" r="22" fill="${def.fg}" opacity="0.9"/>`
+      : def.shape === "triangle"
+      ? `<polygon points="50,30 72,72 28,72" fill="${def.fg}" opacity="0.9"/>`
+      : /* diamond */ `<polygon points="50,28 72,55 50,80 28,55" fill="${def.fg}" opacity="0.9"/>`;
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-    <rect width="100" height="100" fill="${h.color}" rx="12"/>
-    <!-- ヘルメット本体 -->
-    <ellipse cx="50" cy="48" rx="30" ry="32" fill="${h.color}" stroke="rgba(0,0,0,0.2)" stroke-width="1"/>
-    <!-- ヘルメット上部ハイライト -->
-    <ellipse cx="42" cy="30" rx="12" ry="8" fill="rgba(255,255,255,0.18)" transform="rotate(-20 42 30)"/>
-    <!-- バイザー -->
-    <path d="M22 52 Q22 70 50 72 Q78 70 78 52 Q78 44 70 42 Q60 40 50 40 Q40 40 30 42 Q22 44 22 52Z" fill="${h.visor}" opacity="0.92"/>
-    <!-- バイザー光沢 -->
-    <path d="M28 50 Q32 48 42 47" stroke="rgba(255,255,255,0.25)" stroke-width="2" fill="none" stroke-linecap="round"/>
-    <!-- チン部分 -->
-    <path d="M30 65 Q50 75 70 65" stroke="rgba(0,0,0,0.15)" stroke-width="2" fill="none"/>
-    <!-- ベンチレーション -->
-    <rect x="44" y="37" width="12" height="3" rx="1.5" fill="rgba(0,0,0,0.25)"/>
+    <rect width="100" height="100" rx="50" fill="${def.bg}"/>
+    ${shapeEl}
+    <circle cx="50" cy="55" r="22" fill="none" stroke="${def.fg}" stroke-width="2" opacity="0.3"/>
   </svg>`;
   return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
 }
 
-export function getAvatarUrl(seed: string, bg: string) {
-  if (isHelmet(seed)) return getHelmetSvgUri(seed);
-  return `https://api.dicebear.com/7.x/adventurer/svg?seed=${seed}&backgroundColor=${bg}`;
+// ── ヘルメットSVGアバター 3タイプ × 4色 ────────────────────────────────────
+type HelmetType = "full" | "open" | "moto";
+type HelmetDef = { id: string; type: HelmetType; shell: string; visor: string; label: string };
+const HELMET_DEFS: HelmetDef[] = [
+  // フルフェイス（ドーム型 + 横長バイザー）
+  { id: "h_full_red",    type: "full", shell: "#cc2200", visor: "#0a1a40", label: "フル レッド" },
+  { id: "h_full_blue",   type: "full", shell: "#1a4fa0", visor: "#0a2040", label: "フル ブルー" },
+  { id: "h_full_black",  type: "full", shell: "#1a1a1a", visor: "#ff6b00", label: "フル ブラック" },
+  { id: "h_full_white",  type: "full", shell: "#e0e0e0", visor: "#1a3060", label: "フル ホワイト" },
+  // モトクロス（角型バイザー + チンガード）
+  { id: "h_moto_red",    type: "moto", shell: "#cc2200", visor: "#222",    label: "クロス レッド" },
+  { id: "h_moto_blue",   type: "moto", shell: "#1a4fa0", visor: "#222",    label: "クロス ブルー" },
+  { id: "h_moto_green",  type: "moto", shell: "#166534", visor: "#222",    label: "クロス グリーン" },
+  { id: "h_moto_yellow", type: "moto", shell: "#b45309", visor: "#222",    label: "クロス イエロー" },
+];
+
+function makeHelmetSvg(def: HelmetDef): string {
+  let body = "";
+  if (def.type === "full") {
+    // フルフェイス
+    body = `
+      <ellipse cx="50" cy="50" rx="32" ry="36" fill="${def.shell}"/>
+      <ellipse cx="42" cy="32" rx="10" ry="7" fill="rgba(255,255,255,0.2)" transform="rotate(-25 42 32)"/>
+      <path d="M20 56 Q20 76 50 78 Q80 76 80 56 Q80 46 70 43 Q60 40 50 40 Q40 40 30 43 Q20 46 20 56Z" fill="${def.visor}"/>
+      <path d="M26 53 Q34 50 44 49" stroke="rgba(255,255,255,0.3)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <rect x="43" y="37" width="14" height="4" rx="2" fill="rgba(0,0,0,0.3)"/>
+    `;
+  } else {
+    // モトクロス
+    body = `
+      <ellipse cx="50" cy="46" rx="30" ry="28" fill="${def.shell}"/>
+      <rect x="22" y="28" width="56" height="12" rx="4" fill="rgba(0,0,0,0.5)"/>
+      <rect x="24" y="30" width="52" height="8" rx="3" fill="${def.visor}"/>
+      <path d="M22 58 Q28 72 50 74 Q72 72 78 58 L74 52 Q62 56 50 56 Q38 56 26 52 Z" fill="${def.shell}" stroke="rgba(0,0,0,0.2)" stroke-width="1"/>
+      <line x1="42" y1="57" x2="58" y2="57" stroke="rgba(255,255,255,0.2)" stroke-width="3"/>
+      <ellipse cx="38" cy="34" rx="6" ry="4" fill="rgba(255,255,255,0.25)" transform="rotate(-10 38 34)"/>
+    `;
+  }
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+    <rect width="100" height="100" rx="50" fill="#111120"/>
+    ${body}
+  </svg>`;
+  return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+}
+
+export function getAvatarUrl(seed: string, bg: string): string {
+  if (seed.startsWith("c_")) {
+    const def = COLOR_AVATARS.find((a) => a.id === seed);
+    return def ? makeColorAvatarSvg(def) : makeColorAvatarSvg(COLOR_AVATARS[0]);
+  }
+  if (seed.startsWith("h_")) {
+    const def = HELMET_DEFS.find((h) => h.id === seed);
+    return def ? makeHelmetSvg(def) : makeHelmetSvg(HELMET_DEFS[0]);
+  }
+  // DiceBear fallback（既存ユーザー互換）
+  return `https://api.dicebear.com/7.x/shapes/svg?seed=${seed}&backgroundColor=${bg}`;
 }
 
 const BIKE_TYPES = ["ネイキッド", "スポーツ", "ツアラー", "アドベンチャー", "オフロード", "スクーター", "クルーザー", "その他"];
 
-// プリセットアバター一覧（キャラクター）
-const AVATAR_PRESETS = [
-  { seed: "Yamada",  bg: "b6e3f4", label: "ブルー" },
-  { seed: "Rider1",  bg: "ffdfbf", label: "オレンジ" },
-  { seed: "Rider2",  bg: "d1f4e0", label: "グリーン" },
-  { seed: "Rider3",  bg: "c0aede", label: "パープル" },
-  { seed: "Rider4",  bg: "ffd6e0", label: "ピンク" },
+// 旧コード互換（削除可能）
+const _legacy = [
+  { seed: "Yamada", bg: "b6e3f4", label: "旧ブルー" },
   { seed: "Rider5",  bg: "fef3c7", label: "イエロー" },
   { seed: "Rider6",  bg: "dbeafe", label: "スカイ" },
   { seed: "Rider7",  bg: "d1fae5", label: "ミント" },
@@ -158,7 +198,7 @@ export default function ProfileEditModal({
                 </div>
               </div>
               <div className="flex-1">
-                <p className="text-sm text-gray-400 mb-2">キャラクター 8種 + ヘルメット 8種</p>
+                <p className="text-sm text-gray-400 mb-2">カラー 8種 + ヘルメット 8種 計16種</p>
                 <button
                   type="button"
                   onClick={() => setShowAvatarPicker(!showAvatarPicker)}
@@ -178,19 +218,19 @@ export default function ProfileEditModal({
             {/* アバター選択グリッド */}
             {showAvatarPicker && (
               <div style={{ marginTop: "12px", padding: "16px", borderRadius: "12px", background: "#0d0d18", border: "1px solid #252535" }}>
-                {/* キャラクターアバター */}
+                {/* カラーアバター */}
                 <p style={{ fontSize: "11px", fontWeight: 700, color: "#5a5a7a", marginBottom: "10px", textTransform: "uppercase", letterSpacing: "0.08em" }}>
-                  キャラクター
+                  カラーアイコン
                 </p>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "8px", marginBottom: "16px" }}>
-                  {AVATAR_PRESETS.map((preset) => {
-                    const isSelected = form.avatarSeed === preset.seed;
+                  {COLOR_AVATARS.map((preset) => {
+                    const isSelected = form.avatarSeed === preset.id;
                     return (
-                      <button key={preset.seed} type="button" onClick={() => selectAvatar(preset.seed, preset.bg)}
+                      <button key={preset.id} type="button" onClick={() => selectAvatar(preset.id, "")}
                         style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "4px", padding: "8px", borderRadius: "10px", cursor: "pointer",
                           background: isSelected ? "rgba(255,107,0,0.15)" : "transparent",
                           border: isSelected ? "2px solid #ff6b00" : "2px solid transparent", transition: "all 0.15s" }}>
-                        <img src={getAvatarUrl(preset.seed, preset.bg)} alt={preset.label} className="w-12 h-12 rounded-full" />
+                        <img src={getAvatarUrl(preset.id, "")} alt={preset.label} width={48} height={48} className="rounded-full" />
                         <span style={{ fontSize: "10px", color: isSelected ? "#ff6b00" : "#6b7280" }}>{preset.label}</span>
                       </button>
                     );
@@ -198,18 +238,18 @@ export default function ProfileEditModal({
                 </div>
                 {/* ヘルメットアバター */}
                 <p style={{ fontSize: "11px", fontWeight: 700, color: "#5a5a7a", marginBottom: "10px", textTransform: "uppercase", letterSpacing: "0.08em" }}>
-                  🏍️ ヘルメット
+                  ヘルメット（フルフェイス / モトクロス）
                 </p>
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "8px" }}>
-                  {HELMET_COLORS.map((helmet) => {
+                  {HELMET_DEFS.map((helmet) => {
                     const isSelected = form.avatarSeed === helmet.id;
                     return (
-                      <button key={helmet.id} type="button" onClick={() => selectAvatar(helmet.id, "000000")}
+                      <button key={helmet.id} type="button" onClick={() => selectAvatar(helmet.id, "")}
                         style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "4px", padding: "8px", borderRadius: "10px", cursor: "pointer",
                           background: isSelected ? "rgba(255,107,0,0.15)" : "transparent",
                           border: isSelected ? "2px solid #ff6b00" : "2px solid transparent", transition: "all 0.15s" }}>
-                        <img src={getHelmetSvgUri(helmet.id)} alt={helmet.label} className="w-12 h-12 rounded-full" style={{ background: "#1a1a25" }} />
-                        <span style={{ fontSize: "10px", color: isSelected ? "#ff6b00" : "#6b7280" }}>{helmet.label}</span>
+                        <img src={getAvatarUrl(helmet.id, "")} alt={helmet.label} width={48} height={48} className="rounded-full" />
+                        <span style={{ fontSize: "9px", color: isSelected ? "#ff6b00" : "#6b7280", textAlign: "center", lineHeight: 1.3 }}>{helmet.label}</span>
                       </button>
                     );
                   })}

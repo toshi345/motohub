@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { loadSessions, deleteSession, formatDuration, TrackSession } from "@/lib/gps";
 import { calcStats } from "@/lib/achievements";
 import { loadRouteLibrary, saveToLibrary, deleteFromLibrary, updateRouteInLibrary, SavedRoute } from "@/lib/routeLibrary";
-import { RulerIcon, BikeIcon, ClockIcon, SpeedIcon, MapIcon, PinIcon, FlameIcon } from "@/components/Icons";
+import { RulerIcon, BikeIcon, ClockIcon, SpeedIcon, MapIcon, PinIcon, FlameIcon, ChartIcon, TrophyIcon } from "@/components/Icons";
 
 type MainTab = "log" | "library";
 type LogFilter = "all" | "week" | "month" | "year";
@@ -82,14 +82,16 @@ function SessionRow({
 
   return (
     <div className="card p-5 flex items-center gap-4 hover:border-[#3a3a4a] transition-colors">
-      <div className="text-4xl shrink-0">🏍️</div>
+      <div className="shrink-0 flex items-center justify-center w-10 h-10 rounded-full" style={{background:"rgba(255,107,0,0.1)"}}>
+        <BikeIcon size={22} color="#ff6b00" />
+      </div>
       <div className="flex-1 min-w-0">
         <div className="text-sm font-semibold mb-2">{dateStr}</div>
         <div className="flex flex-wrap gap-3 text-xs text-gray-400">
-          <span>📏 {session.totalDistanceKm.toFixed(1)} km</span>
-          <span>⏱️ {dur}</span>
-          <span>⚡ {Math.round(session.maxSpeedKmh)} km/h</span>
-          <span>📍 {session.points.length} pt</span>
+          <span className="flex items-center gap-1"><RulerIcon size={12} color="currentColor"/>{session.totalDistanceKm.toFixed(1)} km</span>
+          <span className="flex items-center gap-1"><ClockIcon size={12} color="currentColor"/>{dur}</span>
+          <span className="flex items-center gap-1"><SpeedIcon size={12} color="currentColor"/>{Math.round(session.maxSpeedKmh)} km/h</span>
+          <span className="flex items-center gap-1"><PinIcon size={12} color="currentColor"/>{session.points.length} pt</span>
         </div>
       </div>
       <div className="flex flex-col gap-2 items-end shrink-0">

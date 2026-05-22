@@ -5,7 +5,7 @@ import PostCard from "@/components/PostCard";
 import { mockPosts } from "@/lib/mockData";
 import { Post } from "@/lib/types";
 import { toast } from "@/components/Toast";
-import { BikeIcon, CameraIcon, MapIcon, PinIcon } from "@/components/Icons";
+import { BikeIcon, CameraIcon, MapIcon, PinIcon, FlameIcon } from "@/components/Icons";
 
 const filters = ["すべて", "フォト", "ルート", "スポット"];
 
@@ -123,7 +123,7 @@ export default function HomePage() {
           {/* Trending tags */}
           <div className="card p-5">
             <h3 className="font-bold mb-4 flex items-center gap-2">
-              <span>🔥</span> トレンドタグ
+              <FlameIcon size={18} color="#ff6b00" /> トレンドタグ
             </h3>
             <div className="flex flex-wrap gap-2">
               {trendingTags.map((tag) => (
@@ -158,7 +158,7 @@ export default function HomePage() {
           {/* Popular riders */}
           <div className="card p-5">
             <h3 className="font-bold mb-4 flex items-center gap-2">
-              <span>🏍️</span> 人気ライダー
+              <BikeIcon size={18} color="#ff6b00" /> 人気ライダー
             </h3>
             <div className="space-y-4">
               {[

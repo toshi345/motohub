@@ -3,14 +3,21 @@
 import { useState } from "react";
 import { mockSpots } from "@/lib/mockData";
 import { toast } from "@/components/Toast";
+import { PinIcon, MapIcon, TagIcon, FlameIcon } from "@/components/Icons";
 
 const categories = ["すべて", "道の駅", "峠", "絶景", "グルメ", "温泉"];
 
 function CategoryIcon({ cat }: { cat: string }) {
-  const icons: Record<string, string> = {
-    "道の駅": "🏪", "峠": "⛰️", "絶景": "🌅", "グルメ": "🍜", "温泉": "♨️", "その他": "📍",
+  const map: Record<string, React.ComponentType<{ size?: number; color?: string }>> = {
+    "道の駅": PinIcon,
+    "峠": MapIcon,
+    "絶景": MapIcon,
+    "グルメ": TagIcon,
+    "温泉": FlameIcon,
+    "その他": PinIcon,
   };
-  return <span>{icons[cat] ?? "📍"}</span>;
+  const Icon = map[cat] ?? PinIcon;
+  return <Icon size={14} color="currentColor" />;
 }
 
 function Stars({ rating }: { rating: number }) {
@@ -47,7 +54,7 @@ export default function SpotsPage() {
   return (
     <div className="max-w-6xl mx-auto px-4 pb-4 pt-6">
       <div className="mb-8">
-        <h1 className="text-3xl font-black mb-2">📍 スポットクチコミ</h1>
+        <h1 className="text-3xl font-black mb-2 flex items-center gap-2"><PinIcon size={28} color="#ff6b00" className="inline-block" /> スポットクチコミ</h1>
         <p className="text-gray-400">全国のライダーが厳選したおすすめスポット</p>
       </div>
 
