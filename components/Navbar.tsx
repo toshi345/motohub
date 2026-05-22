@@ -69,6 +69,7 @@ const allNavItems = [
   { href: "/achievements",label: "実績・バッジ",     icon: "🏆", group: "個人機能" },
   { href: "/profile",     label: "プロフィール",     icon: "👤", group: "個人機能" },
   { href: "/support",     label: "サポート・用品",   icon: "❤️", group: "その他" },
+  { href: "/help",        label: "ヘルプ / FAQ",     icon: "❓", group: "その他" },
 ];
 
 export default function Navbar() {

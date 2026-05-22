@@ -325,7 +325,7 @@ export default function ProfileEditModal({
                 </div>
               </div>
               <div className="flex-1">
-                <p className="text-sm text-gray-400 mb-2">ライダー 8種 + カラー 8種 + ヘルメット 8種</p>
+                <p className="text-sm text-gray-400 mb-2">ライダー 8種 + カラー 8種 計16種</p>
                 <button
                   type="button"
                   onClick={() => setShowAvatarPicker(!showAvatarPicker)}
@@ -378,24 +378,6 @@ export default function ProfileEditModal({
                           border: isSelected ? "2px solid #ff6b00" : "2px solid transparent", transition: "all 0.15s" }}>
                         <img src={getAvatarUrl(preset.id, "")} alt={preset.label} width={48} height={48} className="rounded-full" />
                         <span style={{ fontSize: "10px", color: isSelected ? "#ff6b00" : "#6b7280" }}>{preset.label}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-                {/* ヘルメットアバター */}
-                <p style={{ fontSize: "11px", fontWeight: 700, color: "#5a5a7a", marginBottom: "10px", textTransform: "uppercase", letterSpacing: "0.08em" }}>
-                  ヘルメット（フルフェイス / モトクロス）
-                </p>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "8px" }}>
-                  {HELMET_DEFS.map((helmet) => {
-                    const isSelected = form.avatarSeed === helmet.id;
-                    return (
-                      <button key={helmet.id} type="button" onClick={() => selectAvatar(helmet.id, "")}
-                        style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "4px", padding: "8px", borderRadius: "10px", cursor: "pointer",
-                          background: isSelected ? "rgba(255,107,0,0.15)" : "transparent",
-                          border: isSelected ? "2px solid #ff6b00" : "2px solid transparent", transition: "all 0.15s" }}>
-                        <img src={getAvatarUrl(helmet.id, "")} alt={helmet.label} width={48} height={48} className="rounded-full" />
-                        <span style={{ fontSize: "9px", color: isSelected ? "#ff6b00" : "#6b7280", textAlign: "center", lineHeight: 1.3 }}>{helmet.label}</span>
                       </button>
                     );
                   })}
