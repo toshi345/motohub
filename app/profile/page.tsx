@@ -3,9 +3,9 @@
 import { useState, useEffect } from "react";
 import PostCard from "@/components/PostCard";
 import ShareModal from "@/components/ShareModal";
-import ProfileEditModal, { loadProfile, ProfileData } from "@/components/ProfileEditModal";
+import ProfileEditModal, { loadProfile, ProfileData, getAvatarUrl } from "@/components/ProfileEditModal";
 import SettingsModal from "@/components/SettingsModal";
-import { currentUser, mockPosts } from "@/lib/mockData";
+import { mockPosts } from "@/lib/mockData";
 
 const tabs = ["投稿", "ルート", "スポット", "いいね済み"];
 
@@ -25,13 +25,22 @@ export default function ProfilePage() {
       {/* Profile header */}
       <div className="card p-6 mb-6">
         <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5">
-          {/* Avatar */}
-          <div className="relative">
+          {/* Avatar - プロフィールから読み込み */}
+          <div className="relative cursor-pointer" onClick={() => setShowEdit(true)}>
             <img
-              src={currentUser.avatar}
-              alt={currentUser.name}
-              className="w-24 h-24 rounded-full border-4 border-[#ff6b00] bg-[#1a1a25]"
+              src={getAvatarUrl(profile?.avatarSeed ?? "Yamada", profile?.avatarBg ?? "b6e3f4")}
+              alt={profile?.name ?? "ライダー"}
+              className="w-24 h-24 rounded-full bg-[#1a1a25] transition-opacity hover:opacity-80"
+              style={{ border: "4px solid #ff6b00" }}
             />
+            {/* 編集アイコン */}
+            <div className="absolute bottom-0 right-0 w-7 h-7 rounded-full flex items-center justify-center"
+              style={{ background: "#ff6b00", border: "2px solid #0a0a0f" }}>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
+                <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+              </svg>
+            </div>
           </div>
 
           {/* Info */}
@@ -85,7 +94,7 @@ export default function ProfilePage() {
         <a href="/garage" className="flex items-center gap-4 p-4 bg-[#1a1a25] rounded-xl hover:bg-[#202030] transition-colors">
           <div className="text-5xl">🏍️</div>
           <div className="flex-1">
-            <div className="font-bold text-lg">{profile?.bike ?? currentUser.bike}</div>
+            <div className="font-bold text-lg">{profile?.bike ?? "Honda CB650R"}</div>
             <div className="text-sm text-gray-400">2022年式 | 走行距離: 18,450 km</div>
             <div className="flex gap-2 mt-2">
               <span className="tag bg-orange-500/20 text-orange-400">{profile?.bikeType ?? "ネイキッド"}</span>

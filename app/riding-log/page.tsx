@@ -4,14 +4,23 @@ import { useState, useEffect } from "react";
 import { loadSessions, deleteSession, formatDuration, TrackSession } from "@/lib/gps";
 import { calcStats } from "@/lib/achievements";
 import { loadRouteLibrary, saveToLibrary, deleteFromLibrary, updateRouteInLibrary, SavedRoute } from "@/lib/routeLibrary";
+import { RulerIcon, BikeIcon, ClockIcon, SpeedIcon, MapIcon, PinIcon, FlameIcon } from "@/components/Icons";
 
 type MainTab = "log" | "library";
 type LogFilter = "all" | "week" | "month" | "year";
 
+const STAT_ICONS: Record<string, React.ComponentType<{size?: number; color?: string}>> = {
+  "📏": RulerIcon, "🏍️": BikeIcon, "⏱️": ClockIcon, "⚡": SpeedIcon,
+  "🛣️": MapIcon, "📍": PinIcon, "🔥": FlameIcon,
+};
+
 function StatCard({ icon, label, value, sub }: { icon: string; label: string; value: string; sub?: string }) {
+  const IconComp = STAT_ICONS[icon];
   return (
     <div className="card p-4 text-center">
-      <div className="text-2xl mb-1">{icon}</div>
+      <div className="flex justify-center mb-2">
+        {IconComp ? <IconComp size={22} color="#ff6b00" /> : <span className="text-2xl">{icon}</span>}
+      </div>
       <div className="text-xl font-black" style={{ color: "#ff6b00" }}>{value}</div>
       <div className="text-xs text-gray-500">{label}</div>
       {sub && <div className="text-xs text-gray-600 mt-0.5">{sub}</div>}

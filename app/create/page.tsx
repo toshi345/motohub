@@ -6,6 +6,7 @@ import { saveDraft, loadDrafts, deleteDraft, formatDraftDate, DraftData } from "
 import { loadSessions, deleteSession, formatDuration, TrackSession } from "@/lib/gps";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
+import { CameraIcon, MapIcon, PinIcon, TagIcon } from "@/components/Icons";
 
 type PostType = "photo" | "route" | "spot";
 type IllustStyle = "anime" | "sketch" | "watercolor" | "comic";
@@ -298,9 +299,9 @@ function CreateForm() {
       {/* Post type selector */}
       <div className="grid grid-cols-3 gap-3 mb-6">
         {([
-          { type: "photo" as PostType, icon: "📸", label: "フォト投稿" },
-          { type: "route" as PostType, icon: "🗺️", label: "ルート投稿" },
-          { type: "spot" as PostType, icon: "📍", label: "スポット投稿" },
+          { type: "photo" as PostType, Icon: CameraIcon, label: "フォト投稿" },
+          { type: "route" as PostType, Icon: MapIcon,    label: "ルート投稿" },
+          { type: "spot"  as PostType, Icon: PinIcon,    label: "スポット投稿" },
         ]).map((t) => (
           <button
             key={t.type}
@@ -309,7 +310,9 @@ function CreateForm() {
               postType === t.type ? "border-[#ff6b00] bg-[#ff6b00]/10" : "hover:border-[#3a3a4a]"
             }`}
           >
-            <div className="text-3xl mb-1">{t.icon}</div>
+            <div className="flex justify-center mb-2">
+              <t.Icon size={28} color={postType === t.type ? "#ff6b00" : "#6b7280"} />
+            </div>
             <div className="text-sm font-medium">{t.label}</div>
           </button>
         ))}

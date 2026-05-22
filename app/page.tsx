@@ -5,14 +5,15 @@ import PostCard from "@/components/PostCard";
 import { mockPosts } from "@/lib/mockData";
 import { Post } from "@/lib/types";
 import { toast } from "@/components/Toast";
+import { BikeIcon, CameraIcon, MapIcon, PinIcon } from "@/components/Icons";
 
 const filters = ["すべて", "フォト", "ルート", "スポット"];
 
 const stats = [
-  { label: "ライダー", value: "12,483", icon: "🏍️" },
-  { label: "投稿数", value: "38,291", icon: "📸" },
-  { label: "ルート", value: "4,128", icon: "🗺️" },
-  { label: "スポット", value: "9,204", icon: "📍" },
+  { label: "ライダー", value: "12,483", Icon: BikeIcon },
+  { label: "投稿数",   value: "38,291", Icon: CameraIcon },
+  { label: "ルート",   value: "4,128",  Icon: MapIcon },
+  { label: "スポット", value: "9,204",  Icon: PinIcon },
 ];
 
 const trendingTags = ["#秋ツーリング", "#北海道", "#箱根", "#阿蘇", "#道の駅", "#絶景", "#峠", "#日帰り"];
@@ -70,7 +71,9 @@ export default function HomePage() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
         {stats.map((s) => (
           <div key={s.label} className="card p-4 text-center">
-            <div className="text-2xl mb-1">{s.icon}</div>
+            <div className="flex justify-center mb-2">
+              <s.Icon size={24} color="#ff6b00" />
+            </div>
             <div className="text-xl font-black" style={{color: "#ff6b00"}}>{s.value}</div>
             <div className="text-xs text-gray-500">{s.label}</div>
           </div>

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Post } from "@/lib/types";
 import { toast } from "@/components/Toast";
+import { HeartIcon, CommentIcon, ShareIcon } from "@/components/Icons";
 
 function timeAgo(dateStr: string) {
   const diff = Date.now() - new Date(dateStr).getTime();
@@ -138,11 +139,12 @@ export default function PostCard({ post }: { post: Post }) {
             onClick={toggleLike}
             className={`flex items-center gap-2 text-sm transition-colors py-1 ${liked ? "text-red-400" : "text-gray-500 hover:text-red-400"}`}
           >
-            <span className="text-lg">{liked ? "❤️" : "🤍"}</span>
+            <HeartIcon size={18} color={liked ? "#f87171" : "currentColor"} filled={liked} />
             <span>{likeCount}</span>
           </button>
-          <button onClick={() => toast("💬 コメント機能は近日公開予定です", "soon")} className="flex items-center gap-2 text-sm text-gray-500 hover:text-blue-400 transition-colors py-1">
-            <span className="text-lg">💬</span>
+          <button onClick={() => toast("💬 コメント機能は近日公開予定です", "soon")}
+            className="flex items-center gap-2 text-sm text-gray-500 hover:text-blue-400 transition-colors py-1">
+            <CommentIcon size={18} color="currentColor" />
             <span>{post.comments}</span>
           </button>
           <button
@@ -151,14 +153,15 @@ export default function PostCard({ post }: { post: Post }) {
               toast("🔗 URLをコピーしました");
             }}
             className="flex items-center gap-2 text-sm text-gray-500 hover:text-green-400 transition-colors py-1">
-            <span className="text-lg">🔗</span>
+            <ShareIcon size={18} color="currentColor" />
             <span>共有</span>
           </button>
           <div className="flex-1" />
           <button
-            onClick={() => toast("📋 メニュー機能は近日公開予定です", "soon")}
-            className="text-gray-500 hover:text-gray-300 text-xl transition-colors px-1 py-1">
-            ⋯
+            onClick={() => toast("メニュー機能は近日公開予定です", "soon")}
+            className="text-gray-500 hover:text-gray-300 transition-colors px-2 py-1"
+            style={{ fontSize: "20px", letterSpacing: "2px" }}>
+            ···
           </button>
         </div>
       </div>

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
+import { loadProfile, getAvatarUrl } from "@/components/ProfileEditModal";
 
 // SVG icons for bottom nav
 const NavIcons: Record<string, (active: boolean) => React.ReactNode> = {
@@ -77,6 +78,19 @@ export default function Navbar() {
   const [visible, setVisible] = useState(true);
   const [atTop, setAtTop] = useState(true);
   const lastScrollY = useRef(0);
+  const [avatarUrl, setAvatarUrl] = useState("https://api.dicebear.com/7.x/adventurer/svg?seed=Yamada&backgroundColor=b6e3f4");
+
+  useEffect(() => {
+    const p = loadProfile();
+    setAvatarUrl(getAvatarUrl(p.avatarSeed, p.avatarBg));
+    // プロフィール更新時に反映
+    const onStorage = () => {
+      const updated = loadProfile();
+      setAvatarUrl(getAvatarUrl(updated.avatarSeed, updated.avatarBg));
+    };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, []);
 
   useEffect(() => {
     const onScroll = () => {
@@ -182,7 +196,7 @@ export default function Navbar() {
             </Link>
             <Link href="/profile" className="hidden md:block shrink-0">
               <img
-                src="https://api.dicebear.com/7.x/adventurer/svg?seed=Yamada&backgroundColor=b6e3f4"
+                src={avatarUrl}
                 alt="avatar"
                 className="w-9 h-9 rounded-full transition-all"
                 style={{ border: "2px solid #1e1e35" }}
@@ -272,7 +286,7 @@ export default function Navbar() {
               <Link href="/profile" onClick={() => setDrawerOpen(false)}
                 className="flex items-center gap-3 p-3 rounded-xl"
                 style={{ background: "rgba(255,255,255,0.04)" }}>
-                <img src="https://api.dicebear.com/7.x/adventurer/svg?seed=Yamada&backgroundColor=b6e3f4" alt="avatar" className="w-10 h-10 rounded-full" />
+                <img src={avatarUrl} alt="avatar" className="w-10 h-10 rounded-full" />
                 <div>
                   <div className="text-sm font-bold">ライダー山田</div>
                   <div className="text-xs" style={{ color: "#ff6b00" }}>Honda CB650R</div>
