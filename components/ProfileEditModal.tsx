@@ -39,13 +39,54 @@ export function saveProfile(data: ProfileData) {
   try { localStorage.setItem(KEY, JSON.stringify(data)); } catch {}
 }
 
+// ヘルメットSVGアバター（バイク専用デザイン）
+// helmet: prefix で識別
+const HELMET_COLORS = [
+  { id: "helmet_red",    color: "#cc2200", visor: "#1a3a5c", label: "レッド" },
+  { id: "helmet_orange", color: "#ff6b00", visor: "#1a3a5c", label: "オレンジ" },
+  { id: "helmet_blue",   color: "#1a4fa0", visor: "#0a2040", label: "ブルー" },
+  { id: "helmet_black",  color: "#222222", visor: "#ff6b00", label: "ブラック" },
+  { id: "helmet_white",  color: "#e8e8e8", visor: "#1a3a5c", label: "ホワイト" },
+  { id: "helmet_green",  color: "#1a6040", visor: "#0a2a1a", label: "グリーン" },
+  { id: "helmet_yellow", color: "#d4a000", visor: "#1a1a00", label: "イエロー" },
+  { id: "helmet_silver", color: "#888888", visor: "#222244", label: "シルバー" },
+];
+
+export function isHelmet(seed: string) { return seed.startsWith("helmet_"); }
+
+export function getHelmetColor(id: string) {
+  return HELMET_COLORS.find((h) => h.id === id) ?? HELMET_COLORS[0];
+}
+
+// SVGヘルメットをdata URIに変換
+export function getHelmetSvgUri(id: string): string {
+  const h = getHelmetColor(id);
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+    <rect width="100" height="100" fill="${h.color}" rx="12"/>
+    <!-- ヘルメット本体 -->
+    <ellipse cx="50" cy="48" rx="30" ry="32" fill="${h.color}" stroke="rgba(0,0,0,0.2)" stroke-width="1"/>
+    <!-- ヘルメット上部ハイライト -->
+    <ellipse cx="42" cy="30" rx="12" ry="8" fill="rgba(255,255,255,0.18)" transform="rotate(-20 42 30)"/>
+    <!-- バイザー -->
+    <path d="M22 52 Q22 70 50 72 Q78 70 78 52 Q78 44 70 42 Q60 40 50 40 Q40 40 30 42 Q22 44 22 52Z" fill="${h.visor}" opacity="0.92"/>
+    <!-- バイザー光沢 -->
+    <path d="M28 50 Q32 48 42 47" stroke="rgba(255,255,255,0.25)" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <!-- チン部分 -->
+    <path d="M30 65 Q50 75 70 65" stroke="rgba(0,0,0,0.15)" stroke-width="2" fill="none"/>
+    <!-- ベンチレーション -->
+    <rect x="44" y="37" width="12" height="3" rx="1.5" fill="rgba(0,0,0,0.25)"/>
+  </svg>`;
+  return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+}
+
 export function getAvatarUrl(seed: string, bg: string) {
+  if (isHelmet(seed)) return getHelmetSvgUri(seed);
   return `https://api.dicebear.com/7.x/adventurer/svg?seed=${seed}&backgroundColor=${bg}`;
 }
 
 const BIKE_TYPES = ["ネイキッド", "スポーツ", "ツアラー", "アドベンチャー", "オフロード", "スクーター", "クルーザー", "その他"];
 
-// プリセットアバター一覧
+// プリセットアバター一覧（キャラクター）
 const AVATAR_PRESETS = [
   { seed: "Yamada",  bg: "b6e3f4", label: "ブルー" },
   { seed: "Rider1",  bg: "ffdfbf", label: "オレンジ" },
@@ -55,10 +96,6 @@ const AVATAR_PRESETS = [
   { seed: "Rider5",  bg: "fef3c7", label: "イエロー" },
   { seed: "Rider6",  bg: "dbeafe", label: "スカイ" },
   { seed: "Rider7",  bg: "d1fae5", label: "ミント" },
-  { seed: "Rider8",  bg: "ffe4e6", label: "ローズ" },
-  { seed: "Rider9",  bg: "e0e7ff", label: "インディゴ" },
-  { seed: "Rider10", bg: "fce7f3", label: "マゼンタ" },
-  { seed: "Rider11", bg: "ecfdf5", label: "エメラルド" },
 ];
 
 export default function ProfileEditModal({
@@ -116,12 +153,12 @@ export default function ProfileEditModal({
                   style={{ border: "3px solid #ff6b00" }}
                 />
                 <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full flex items-center justify-center text-xs"
-                  style={{ background: "#ff6b00" }}>
+                  style={{ background: "#ff6b00", color: "white" }}>
                   ✓
                 </div>
               </div>
               <div className="flex-1">
-                <p className="text-sm text-gray-400 mb-2">12種類のアバターから選べます</p>
+                <p className="text-sm text-gray-400 mb-2">キャラクター 8種 + ヘルメット 8種</p>
                 <button
                   type="button"
                   onClick={() => setShowAvatarPicker(!showAvatarPicker)}
@@ -140,37 +177,43 @@ export default function ProfileEditModal({
 
             {/* アバター選択グリッド */}
             {showAvatarPicker && (
-              <div style={{
-                display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "10px",
-                marginTop: "12px", padding: "16px", borderRadius: "12px",
-                background: "#0d0d18", border: "1px solid #252535",
-              }}>
-                {AVATAR_PRESETS.map((preset) => {
-                  const isSelected = form.avatarSeed === preset.seed;
-                  return (
-                    <button
-                      key={preset.seed}
-                      type="button"
-                      onClick={() => selectAvatar(preset.seed, preset.bg)}
-                      style={{
-                        display: "flex", flexDirection: "column", alignItems: "center", gap: "4px",
-                        padding: "8px", borderRadius: "10px", cursor: "pointer",
-                        background: isSelected ? "rgba(255,107,0,0.15)" : "transparent",
-                        border: isSelected ? "2px solid #ff6b00" : "2px solid transparent",
-                        transition: "all 0.15s",
-                      }}
-                    >
-                      <img
-                        src={getAvatarUrl(preset.seed, preset.bg)}
-                        alt={preset.label}
-                        className="w-14 h-14 rounded-full"
-                      />
-                      <span style={{ fontSize: "10px", color: isSelected ? "#ff6b00" : "#6b7280" }}>
-                        {preset.label}
-                      </span>
-                    </button>
-                  );
-                })}
+              <div style={{ marginTop: "12px", padding: "16px", borderRadius: "12px", background: "#0d0d18", border: "1px solid #252535" }}>
+                {/* キャラクターアバター */}
+                <p style={{ fontSize: "11px", fontWeight: 700, color: "#5a5a7a", marginBottom: "10px", textTransform: "uppercase", letterSpacing: "0.08em" }}>
+                  キャラクター
+                </p>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "8px", marginBottom: "16px" }}>
+                  {AVATAR_PRESETS.map((preset) => {
+                    const isSelected = form.avatarSeed === preset.seed;
+                    return (
+                      <button key={preset.seed} type="button" onClick={() => selectAvatar(preset.seed, preset.bg)}
+                        style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "4px", padding: "8px", borderRadius: "10px", cursor: "pointer",
+                          background: isSelected ? "rgba(255,107,0,0.15)" : "transparent",
+                          border: isSelected ? "2px solid #ff6b00" : "2px solid transparent", transition: "all 0.15s" }}>
+                        <img src={getAvatarUrl(preset.seed, preset.bg)} alt={preset.label} className="w-12 h-12 rounded-full" />
+                        <span style={{ fontSize: "10px", color: isSelected ? "#ff6b00" : "#6b7280" }}>{preset.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+                {/* ヘルメットアバター */}
+                <p style={{ fontSize: "11px", fontWeight: 700, color: "#5a5a7a", marginBottom: "10px", textTransform: "uppercase", letterSpacing: "0.08em" }}>
+                  🏍️ ヘルメット
+                </p>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "8px" }}>
+                  {HELMET_COLORS.map((helmet) => {
+                    const isSelected = form.avatarSeed === helmet.id;
+                    return (
+                      <button key={helmet.id} type="button" onClick={() => selectAvatar(helmet.id, "000000")}
+                        style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "4px", padding: "8px", borderRadius: "10px", cursor: "pointer",
+                          background: isSelected ? "rgba(255,107,0,0.15)" : "transparent",
+                          border: isSelected ? "2px solid #ff6b00" : "2px solid transparent", transition: "all 0.15s" }}>
+                        <img src={getHelmetSvgUri(helmet.id)} alt={helmet.label} className="w-12 h-12 rounded-full" style={{ background: "#1a1a25" }} />
+                        <span style={{ fontSize: "10px", color: isSelected ? "#ff6b00" : "#6b7280" }}>{helmet.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
             )}
           </div>

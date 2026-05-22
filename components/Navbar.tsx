@@ -120,7 +120,7 @@ export default function Navbar() {
           transition: "transform 0.3s cubic-bezier(0.4,0,0.2,1), background 0.3s",
           background: atTop ? "rgba(8,8,16,0.7)" : "rgba(8,8,16,0.97)",
         }}>
-        <div className="max-w-6xl mx-auto px-5 h-16 flex items-center gap-6">
+        <div className="max-w-6xl mx-auto px-5 h-16 flex items-center justify-between">
 
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 font-black text-xl shrink-0 group">
@@ -186,34 +186,33 @@ export default function Navbar() {
             </div>
           </div>
 
-          {/* Right actions */}
-          <div className="flex items-center gap-3 ml-auto">
+          {/* Right actions — 常に右端に固定 */}
+          <div style={{ display: "flex", alignItems: "center", gap: "10px", flexShrink: 0 }}>
+            {/* 投稿する（デスクトップのみ） */}
             <Link href="/create" className="hidden md:flex btn-primary text-sm gap-1.5">
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
                 <line x1="7" y1="1" x2="7" y2="13"/><line x1="1" y1="7" x2="13" y2="7"/>
               </svg>
               投稿する
             </Link>
+            {/* アバター（デスクトップのみ） */}
             <Link href="/profile" className="hidden md:block shrink-0">
-              <img
-                src={avatarUrl}
-                alt="avatar"
-                className="w-9 h-9 rounded-full transition-all"
+              <img src={avatarUrl} alt="avatar" className="w-9 h-9 rounded-full transition-all"
                 style={{ border: "2px solid #1e1e35" }}
                 onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.borderColor = "#ff6b00"; }}
                 onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.borderColor = "#1e1e35"; }}
               />
             </Link>
-
-            {/* ハンバーガーボタン（モバイルのみ） */}
+            {/* ハンバーガー（モバイルのみ）— 常に右端 */}
             <button
-              className="md:hidden flex flex-col justify-center gap-1.5 w-9 h-9 items-center"
+              className="md:hidden"
               onClick={() => setDrawerOpen(true)}
               aria-label="メニュー"
+              style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", gap: "5px", width: "40px", height: "40px", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "10px", cursor: "pointer" }}
             >
-              <span style={{ display: "block", width: "20px", height: "2px", background: "#a0a0c0", borderRadius: "2px", transition: "all 0.2s" }} />
-              <span style={{ display: "block", width: "20px", height: "2px", background: "#a0a0c0", borderRadius: "2px", transition: "all 0.2s" }} />
-              <span style={{ display: "block", width: "14px", height: "2px", background: "#a0a0c0", borderRadius: "2px", transition: "all 0.2s" }} />
+              <span style={{ display: "block", width: "18px", height: "2px", background: "#a0a0c0", borderRadius: "2px" }} />
+              <span style={{ display: "block", width: "18px", height: "2px", background: "#a0a0c0", borderRadius: "2px" }} />
+              <span style={{ display: "block", width: "12px", height: "2px", background: "#a0a0c0", borderRadius: "2px" }} />
             </button>
           </div>
         </div>
