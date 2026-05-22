@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { mockRoutes } from "@/lib/mockData";
 import { toast } from "@/components/Toast";
+import { PinIcon, MapIcon } from "@/components/Icons";
 
 const difficulties = ["すべて", "初級", "中級", "上級"];
 
@@ -171,10 +172,23 @@ export default function RoutesPage() {
 
       {/* Map preview section */}
       <div className="mt-10">
-        <h2 className="text-xl font-bold mb-4">📍 ルートマップ（サンプル）</h2>
+        <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+          <PinIcon size={20} color="#ff6b00" /> ルートマップ（サンプル）
+        </h2>
         <div className="card p-6 flex items-center justify-center min-h-64" style={{background: "linear-gradient(135deg, #0a1a0a 0%, #0a0a1a 100%)"}}>
           <div className="text-center">
-            <div className="text-6xl mb-4">🗾</div>
+            {/* シンプルSVGマップアイコン */}
+            <div className="flex justify-center mb-4">
+              <svg width="72" height="72" viewBox="0 0 100 100" fill="none">
+                <rect x="5" y="15" width="90" height="70" rx="6" stroke="#ff6b00" strokeWidth="3" fill="rgba(255,107,0,0.06)"/>
+                <path d="M5 30 Q25 25 35 35 Q45 45 60 32 Q75 20 95 28" stroke="#ff6b00" strokeWidth="2.5" fill="none" strokeDasharray="4 3"/>
+                <circle cx="35" cy="37" r="5" fill="#ff6b00" opacity="0.8"/>
+                <circle cx="60" cy="32" r="5" fill="#10b981" opacity="0.8"/>
+                <line x1="20" y1="55" x2="80" y2="55" stroke="#252535" strokeWidth="1.5"/>
+                <line x1="20" y1="65" x2="65" y2="65" stroke="#252535" strokeWidth="1.5"/>
+                <line x1="20" y1="75" x2="75" y2="75" stroke="#252535" strokeWidth="1.5"/>
+              </svg>
+            </div>
             <p className="text-gray-400 mb-2">インタラクティブマップ</p>
             <p className="text-sm text-gray-500">
               本番環境では Mapbox / Google Maps でルートを地図上に表示します

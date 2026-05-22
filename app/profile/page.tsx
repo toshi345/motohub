@@ -8,7 +8,7 @@ import SettingsModal from "@/components/SettingsModal";
 import { mockPosts } from "@/lib/mockData";
 import {
   ChartIcon, BikeIcon, FuelIcon, MoneyIcon, TrophyIcon, MapIcon,
-  PinIcon, HeartIcon,
+  PinIcon, HeartIcon, CheckIcon,
 } from "@/components/Icons";
 
 const tabs = ["投稿", "ルート", "スポット", "いいね済み"];
@@ -111,7 +111,9 @@ export default function ProfilePage() {
 
       {/* Free notice */}
       <div className="card p-4 mb-6 flex items-center gap-4" style={{background: "linear-gradient(135deg, rgba(255,107,0,0.08) 0%, rgba(204,85,0,0.03) 100%)", borderColor: "rgba(255,107,0,0.25)"}}>
-        <span className="text-3xl shrink-0">🎉</span>
+        <div className="shrink-0 w-10 h-10 rounded-full flex items-center justify-center" style={{background:"rgba(255,107,0,0.15)"}}>
+          <CheckIcon size={20} color="#ff6b00" />
+        </div>
         <div className="flex-1">
           <div className="font-bold mb-0.5">MotoHub — 現在すべて無料で提供中</div>
           <div className="text-sm text-gray-400">GPS記録・燃費管理・ルート共有・AIイラストなど全機能が無料です。</div>

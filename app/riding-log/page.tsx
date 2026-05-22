@@ -283,8 +283,8 @@ export default function RidingLogPage() {
       {/* Tabs */}
       <div style={{ display: "flex", gap: "10px", marginBottom: "24px", marginTop: "8px" }}>
         {([
-          { key: "log", label: "🗒️ 走行ログ" },
-          { key: "library", label: "📚 ルートライブラリ" },
+          { key: "log", label: "走行ログ" },
+          { key: "library", label: "ルートライブラリ" },
         ] as { key: MainTab; label: string }[]).map((t) => (
           <button
             key={t.key}
@@ -344,9 +344,9 @@ export default function RidingLogPage() {
         <div className="space-y-4">
           {library.length === 0 ? (
             <div className="card p-12 text-center text-gray-500">
-              <div className="text-5xl mb-4">📚</div>
+              <div className="flex justify-center mb-4"><MapIcon size={48} color="#5a5a7a" /></div>
               <p className="text-lg font-medium mb-1">ルートライブラリが空です</p>
-              <p className="text-sm">走行ログから「📚 ライブラリへ」で保存できます</p>
+              <p className="text-sm">走行ログから「ライブラリへ」ボタンで保存できます</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

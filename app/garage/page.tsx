@@ -302,7 +302,7 @@ export default function GaragePage() {
 
               {selected.maintenanceRecords.length === 0 ? (
                 <div className="card p-10 text-center text-gray-500">
-                  <div className="text-4xl mb-3">🔧</div>
+                  <div className="flex justify-center mb-3"><WrenchIcon size={40} color="#6b7280" /></div>
                   <p>メンテナンス記録がありません</p>
                   <button onClick={openAddMaint} className="btn-primary mt-4 text-sm">最初の記録を追加</button>
                 </div>
