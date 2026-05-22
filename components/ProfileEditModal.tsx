@@ -31,7 +31,7 @@ const DEFAULT_PROFILE: ProfileData = {
   bikeYear: "2022",
   bikeType: "ネイキッド",
   location: "東京都",
-  avatarSeed: "c_orange",  // デフォルト：オレンジのカラーアバター
+  avatarSeed: "r_sport",   // デフォルト：スポーツライダーシルエット
   avatarBg: "",
 };
 
@@ -115,7 +115,134 @@ function makeHelmetSvg(def: HelmetDef): string {
   return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
 }
 
+// ── バイク乗りシルエットアバター ─────────────────────────────────────────────
+type RidePos = "sport" | "cruiser" | "scooter" | "adventure" | "offroad";
+type RiderDef = { id: string; label: string; bg: string; fg: string; accent: string; pos: RidePos };
+
+const RIDER_AVATARS: RiderDef[] = [
+  { id: "r_sport",     label: "スポーツ",      bg: "#0d0818", fg: "#ffffff", accent: "#ff6b00", pos: "sport" },
+  { id: "r_cruiser",   label: "クルーザー",    bg: "#0a1628", fg: "#e2e8f0", accent: "#60a5fa", pos: "cruiser" },
+  { id: "r_scooter",   label: "スクーター",    bg: "#083344", fg: "#ffffff", accent: "#22d3ee", pos: "scooter" },
+  { id: "r_adventure", label: "アドベンチャー", bg: "#052e16", fg: "#86efac", accent: "#4ade80", pos: "adventure" },
+  { id: "r_naked",     label: "ネイキッド",    bg: "#2d0808", fg: "#ffffff", accent: "#f87171", pos: "sport" },
+  { id: "r_offroad",   label: "オフロード",    bg: "#1a1200", fg: "#fbbf24", accent: "#f97316", pos: "offroad" },
+  { id: "r_retro",     label: "レトロ",        bg: "#1c0e00", fg: "#fde68a", accent: "#d97706", pos: "cruiser" },
+  { id: "r_touring",   label: "ツーリング",    bg: "#0f0a2a", fg: "#c7d2fe", accent: "#818cf8", pos: "adventure" },
+];
+
+function makeRiderSvg(def: RiderDef): string {
+  const { bg, fg, accent, pos } = def;
+
+  const sport = `
+    <circle cx="22" cy="69" r="13" fill="none" stroke="${fg}" stroke-width="3.5"/>
+    <circle cx="22" cy="69" r="4" fill="${fg}"/>
+    <circle cx="74" cy="69" r="13" fill="none" stroke="${fg}" stroke-width="3.5"/>
+    <circle cx="74" cy="69" r="4" fill="${fg}"/>
+    <path d="M22 69 L34 51 L56 48 L69 59 L74 69" stroke="${fg}" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <path d="M34 53 L54 49 L60 55 L38 58z" fill="${fg}"/>
+    <path d="M22 68 L13 73" stroke="${fg}" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M66 50 L74 65" stroke="${fg}" stroke-width="3" stroke-linecap="round"/>
+    <path d="M62 47 L70 43 L74 47" stroke="${fg}" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <ellipse cx="62" cy="27" rx="10" ry="11" fill="${fg}"/>
+    <path d="M54 31 Q62 25 70 31 Q70 37 62 38 Q54 37z" fill="${accent}" opacity="0.92"/>
+    <path d="M56 31 Q59 29 62 29" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <path d="M57 38 L44 53" stroke="${fg}" stroke-width="9" stroke-linecap="round"/>
+    <path d="M54 42 L70 50" stroke="${fg}" stroke-width="5.5" stroke-linecap="round"/>
+    <path d="M45 54 L34 65 L24 67" stroke="${fg}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M46 55 L57 65 L70 65" stroke="${fg}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  `;
+
+  const cruiser = `
+    <circle cx="19" cy="70" r="14" fill="none" stroke="${fg}" stroke-width="3.5"/>
+    <circle cx="19" cy="70" r="4" fill="${fg}"/>
+    <circle cx="76" cy="70" r="14" fill="none" stroke="${fg}" stroke-width="3.5"/>
+    <circle cx="76" cy="70" r="4" fill="${fg}"/>
+    <path d="M19 70 L32 60 L62 58 L74 66 L76 70" stroke="${fg}" stroke-width="2.5" fill="none"/>
+    <path d="M32 60 L40 53 L62 53 L68 60 L32 60z" fill="${fg}" opacity="0.5"/>
+    <path d="M33 60 L58 56 L62 61 L37 64z" fill="${fg}"/>
+    <path d="M62 50 L68 44 L74 48" stroke="${fg}" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <path d="M64 50 L76 66" stroke="${fg}" stroke-width="3.5" stroke-linecap="round"/>
+    <path d="M19 70 L9 75" stroke="${fg}" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="48" cy="27" r="11" fill="${fg}"/>
+    <path d="M39 31 Q48 25 57 31 Q57 37 48 38 Q39 37z" fill="${accent}" opacity="0.92"/>
+    <path d="M40 31 Q44 29 48 29" stroke="rgba(255,255,255,0.35)" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <path d="M48 38 L45 57" stroke="${fg}" stroke-width="10" stroke-linecap="round"/>
+    <path d="M46 43 L63 47" stroke="${fg}" stroke-width="5.5" stroke-linecap="round"/>
+    <path d="M43 57 L34 68 L21 70" stroke="${fg}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M47 58 L58 68 L74 70" stroke="${fg}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  `;
+
+  const scooter = `
+    <circle cx="24" cy="72" r="11" fill="none" stroke="${fg}" stroke-width="3"/>
+    <circle cx="24" cy="72" r="3.5" fill="${fg}"/>
+    <circle cx="72" cy="72" r="11" fill="none" stroke="${fg}" stroke-width="3"/>
+    <circle cx="72" cy="72" r="3.5" fill="${fg}"/>
+    <rect x="30" y="64" width="40" height="5" rx="2.5" fill="${fg}" opacity="0.6"/>
+    <path d="M30 64 L38 53 L62 51 L70 62 L30 64z" fill="${fg}" opacity="0.45"/>
+    <path d="M60 50 L68 44 L72 48" stroke="${fg}" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <path d="M62 50 L72 64" stroke="${fg}" stroke-width="3" stroke-linecap="round"/>
+    <path d="M30 64 L24 68" stroke="${fg}" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="47" cy="27" r="10" fill="${fg}"/>
+    <path d="M39 31 Q47 25 55 31 Q55 36 47 37 Q39 36z" fill="${accent}" opacity="0.92"/>
+    <path d="M47 37 L45 56" stroke="${fg}" stroke-width="10" stroke-linecap="round"/>
+    <path d="M45 41 L62 45" stroke="${fg}" stroke-width="5" stroke-linecap="round"/>
+    <path d="M43 57 L36 66" stroke="${fg}" stroke-width="5.5" stroke-linecap="round"/>
+    <path d="M47 58 L55 66" stroke="${fg}" stroke-width="5.5" stroke-linecap="round"/>
+  `;
+
+  const adventure = `
+    <circle cx="21" cy="69" r="14" fill="none" stroke="${fg}" stroke-width="3"/>
+    <circle cx="21" cy="69" r="4" fill="${fg}"/>
+    <circle cx="75" cy="69" r="15" fill="none" stroke="${fg}" stroke-width="3"/>
+    <circle cx="75" cy="69" r="4" fill="${fg}"/>
+    <path d="M21 69 L34 47 L56 45 L72 57 L75 69" stroke="${fg}" stroke-width="2.5" fill="none"/>
+    <path d="M34 49 L55 45 L59 51 L38 55z" fill="${fg}"/>
+    <rect x="26" y="56" width="8" height="11" rx="1.5" fill="${fg}" opacity="0.45"/>
+    <path d="M65 49 L75 65" stroke="${fg}" stroke-width="3" stroke-linecap="round"/>
+    <path d="M54 43 L62 38 L70 43" stroke="${fg}" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <ellipse cx="51" cy="25" rx="11" ry="12" fill="${fg}"/>
+    <rect x="42" y="22" width="18" height="9" rx="3" fill="${accent}" opacity="0.92"/>
+    <path d="M44 22 Q51 18 58 22" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" fill="none"/>
+    <path d="M51 36 L47 54" stroke="${fg}" stroke-width="10" stroke-linecap="round"/>
+    <path d="M49 41 L63 41" stroke="${fg}" stroke-width="5.5" stroke-linecap="round"/>
+    <path d="M45 55 L35 65 L23 68" stroke="${fg}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M49 56 L60 65 L73 68" stroke="${fg}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  `;
+
+  const offroad = `
+    <circle cx="23" cy="70" r="13" fill="none" stroke="${fg}" stroke-width="3"/>
+    <circle cx="23" cy="70" r="4" fill="${fg}"/>
+    <circle cx="73" cy="70" r="13" fill="none" stroke="${fg}" stroke-width="3"/>
+    <circle cx="73" cy="70" r="4" fill="${fg}"/>
+    <path d="M23 70 L36 50 L55 47 L70 58 L73 70" stroke="${fg}" stroke-width="2.5" fill="none"/>
+    <path d="M36 52 L54 48 L57 53 L39 57z" fill="${fg}"/>
+    <path d="M54 45 L61 38 L70 43" stroke="${fg}" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <path d="M64 47 L73 64" stroke="${fg}" stroke-width="3" stroke-linecap="round"/>
+    <line x1="30" y1="64" x2="21" y2="64" stroke="${fg}" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="65" y1="63" x2="73" y2="63" stroke="${fg}" stroke-width="2.5" stroke-linecap="round"/>
+    <ellipse cx="51" cy="21" rx="10" ry="11" fill="${fg}"/>
+    <rect x="43" y="18" width="16" height="10" rx="2" fill="${accent}" opacity="0.95"/>
+    <path d="M51 32 L47 50" stroke="${fg}" stroke-width="9" stroke-linecap="round"/>
+    <path d="M48 36 L62 40" stroke="${fg}" stroke-width="5" stroke-linecap="round"/>
+    <path d="M45 51 L36 62 L25 64" stroke="${fg}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M49 52 L60 62 L70 63" stroke="${fg}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  `;
+
+  const bodies: Record<RidePos, string> = { sport, cruiser, scooter, adventure, offroad };
+  const body = bodies[pos];
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+    <defs><clipPath id="cc"><circle cx="50" cy="50" r="50"/></clipPath></defs>
+    <circle cx="50" cy="50" r="50" fill="${bg}"/>
+    <g clip-path="url(#cc)">${body}</g>
+  </svg>`;
+  return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+}
+
 export function getAvatarUrl(seed: string, bg: string): string {
+  if (seed.startsWith("r_")) {
+    const def = RIDER_AVATARS.find((a) => a.id === seed);
+    return def ? makeRiderSvg(def) : makeRiderSvg(RIDER_AVATARS[0]);
+  }
   if (seed.startsWith("c_")) {
     const def = COLOR_AVATARS.find((a) => a.id === seed);
     return def ? makeColorAvatarSvg(def) : makeColorAvatarSvg(COLOR_AVATARS[0]);
@@ -198,7 +325,7 @@ export default function ProfileEditModal({
                 </div>
               </div>
               <div className="flex-1">
-                <p className="text-sm text-gray-400 mb-2">カラー 8種 + ヘルメット 8種 計16種</p>
+                <p className="text-sm text-gray-400 mb-2">ライダー 8種 + カラー 8種 + ヘルメット 8種</p>
                 <button
                   type="button"
                   onClick={() => setShowAvatarPicker(!showAvatarPicker)}
@@ -218,6 +345,25 @@ export default function ProfileEditModal({
             {/* アバター選択グリッド */}
             {showAvatarPicker && (
               <div style={{ marginTop: "12px", padding: "16px", borderRadius: "12px", background: "#0d0d18", border: "1px solid #252535" }}>
+                {/* バイク乗りシルエット */}
+                <p style={{ fontSize: "11px", fontWeight: 700, color: "#5a5a7a", marginBottom: "10px", textTransform: "uppercase", letterSpacing: "0.08em" }}>
+                  🏍️ バイク乗りシルエット
+                </p>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "8px", marginBottom: "16px" }}>
+                  {RIDER_AVATARS.map((rider) => {
+                    const isSelected = form.avatarSeed === rider.id;
+                    return (
+                      <button key={rider.id} type="button" onClick={() => selectAvatar(rider.id, "")}
+                        style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "4px", padding: "8px", borderRadius: "10px", cursor: "pointer",
+                          background: isSelected ? "rgba(255,107,0,0.15)" : "transparent",
+                          border: isSelected ? "2px solid #ff6b00" : "2px solid transparent", transition: "all 0.15s" }}>
+                        <img src={getAvatarUrl(rider.id, "")} alt={rider.label} width={48} height={48} className="rounded-full" />
+                        <span style={{ fontSize: "9px", color: isSelected ? "#ff6b00" : "#6b7280", textAlign: "center" }}>{rider.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+
                 {/* カラーアバター */}
                 <p style={{ fontSize: "11px", fontWeight: 700, color: "#5a5a7a", marginBottom: "10px", textTransform: "uppercase", letterSpacing: "0.08em" }}>
                   カラーアイコン
