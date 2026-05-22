@@ -67,6 +67,7 @@ const allNavItems = [
   { href: "/expenses",    label: "費用管理",         icon: "💴", group: "個人機能" },
   { href: "/achievements",label: "実績・バッジ",     icon: "🏆", group: "個人機能" },
   { href: "/profile",     label: "プロフィール",     icon: "👤", group: "個人機能" },
+  { href: "/support",     label: "サポート・用品",   icon: "❤️", group: "その他" },
 ];
 
 export default function Navbar() {
@@ -237,7 +238,7 @@ export default function Navbar() {
 
             {/* ナビアイテム */}
             <div className="p-4 space-y-1">
-              {["メイン", "個人機能"].map((group) => (
+              {["メイン", "個人機能", "その他"].map((group) => (
                 <div key={group}>
                   <p className="text-xs font-bold uppercase tracking-wider px-3 py-2" style={{ color: "#5a5a7a" }}>{group}</p>
                   {allNavItems.filter((i) => i.group === group).map((item) => {

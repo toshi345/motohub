@@ -151,7 +151,7 @@ export default function FuelPage() {
   })();
 
   return (
-    <div className="max-w-4xl mx-auto px-4 pb-24 md:pb-8 pt-6">
+    <div className="max-w-4xl mx-auto px-4 pb-4 pt-6">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>

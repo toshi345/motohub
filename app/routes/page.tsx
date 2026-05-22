@@ -40,7 +40,7 @@ export default function RoutesPage() {
   });
 
   return (
-    <div className="max-w-6xl mx-auto px-4 pb-24 md:pb-8 pt-6">
+    <div className="max-w-6xl mx-auto px-4 pb-4 pt-6">
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-black mb-2">

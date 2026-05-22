@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useCallback, useEffect } from "react";
+import { toast } from "@/components/Toast";
 import { saveDraft, loadDrafts, deleteDraft, formatDraftDate, DraftData } from "@/lib/draft";
 import { loadSessions, deleteSession, formatDuration, TrackSession } from "@/lib/gps";
 import { useSearchParams } from "next/navigation";
@@ -34,6 +35,7 @@ function CreateForm() {
   const [illustStyle, setIllustStyle] = useState<IllustStyle>("anime");
   const [illustLoading, setIllustLoading] = useState(false);
   const [illustResult, setIllustResult] = useState<string | null>(null);
+  const [illustTargetIndex, setIllustTargetIndex] = useState(0);
 
   const [routeDistance, setRouteDistance] = useState(gpsDistance);
   const [routeDuration, setRouteDuration] = useState(gpsDuration);
@@ -105,6 +107,7 @@ function CreateForm() {
     setAutoSaveMsg("下書きを保存しました ✓");
     setDrafts(loadDrafts());
     setTimeout(() => setAutoSaveMsg(null), 2500);
+    toast("💾 下書きを保存しました", "info");
   };
 
   const loadDraft = (draft: DraftData) => {
@@ -164,7 +167,7 @@ function CreateForm() {
     setIllustLoading(true);
     if (illustTimerRef.current) clearTimeout(illustTimerRef.current);
     illustTimerRef.current = setTimeout(() => {
-      setIllustResult(images[0]);
+      setIllustResult(images[illustTargetIndex]);
       setIllustLoading(false);
       illustTimerRef.current = null;
     }, 2500);
@@ -197,7 +200,7 @@ function CreateForm() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-4 pb-32 md:pb-10 pt-6">
+    <div className="max-w-2xl mx-auto px-4 pb-4 pt-6">
       {/* Header */}
       <div className="flex items-start justify-between mb-6">
         <div>
@@ -364,13 +367,21 @@ function CreateForm() {
           {images.length > 0 && (
             <div className="grid grid-cols-3 gap-2 mt-3">
               {images.map((img, i) => (
-                <div key={i} className="relative group">
+                <div
+                  key={i}
+                  className="relative group cursor-pointer"
+                  onClick={() => setIllustTargetIndex(i)}
+                  style={{border: showIllust && illustTargetIndex === i ? "2px solid #f97316" : "2px solid transparent", borderRadius: "10px"}}
+                >
                   <img src={img} alt="" className="w-full h-24 object-cover rounded-lg" />
                   <button
                     type="button"
-                    onClick={() => setImages(images.filter((_, j) => j !== i))}
+                    onClick={(e) => { e.stopPropagation(); setImages(images.filter((_, j) => j !== i)); if (illustTargetIndex >= images.length - 1) setIllustTargetIndex(Math.max(0, images.length - 2)); }}
                     className="absolute top-1 right-1 bg-black/70 text-white rounded-full w-5 h-5 text-xs flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
                   >×</button>
+                  {showIllust && illustTargetIndex === i && (
+                    <span className="absolute bottom-1 left-1 text-xs font-bold px-1.5 py-0.5 rounded" style={{background:"#f97316", color:"white", fontSize:"10px"}}>AI変換対象</span>
+                  )}
                 </div>
               ))}
             </div>
@@ -412,7 +423,7 @@ function CreateForm() {
                 <div className="grid grid-cols-2 gap-2">
                   {illustStyles.map((s) => (
                     <button key={s.key} type="button"
-                      onClick={() => { setIllustStyle(s.key); setIllustResult(null); }}
+                      onClick={() => { setIllustStyle(s.key); }}
                       className={`p-3 rounded-lg text-left border transition-all ${
                         illustStyle === s.key ? "border-purple-500 bg-purple-500/20" : "border-[#252535] hover:border-purple-500/50"
                       }`}>
@@ -452,11 +463,16 @@ function CreateForm() {
                     <div className="grid grid-cols-2 gap-3">
                       <div>
                         <p className="text-xs text-gray-500 mb-1">元の写真</p>
-                        <img src={images[0]} alt="original" className="w-full h-32 object-cover rounded-lg" />
+                        <img src={images[illustTargetIndex]} alt="original" className="w-full h-32 object-cover rounded-lg" />
                       </div>
                       <div>
                         <p className="text-xs text-gray-500 mb-1">AIイラスト</p>
-                        <img src={illustResult} alt="illust" className="w-full h-32 object-cover rounded-lg" style={{filter:"saturate(1.8) contrast(1.2) hue-rotate(10deg)"}} />
+                        <img src={illustResult} alt="illust" className="w-full h-32 object-cover rounded-lg" style={{filter:
+                          illustStyle === "anime" ? "saturate(2.2) contrast(1.3) hue-rotate(15deg) brightness(1.05)" :
+                          illustStyle === "sketch" ? "grayscale(1) contrast(1.8) brightness(1.15) blur(0.3px)" :
+                          illustStyle === "watercolor" ? "saturate(1.4) brightness(1.1) hue-rotate(-15deg) blur(0.6px) contrast(0.9)" :
+                          "saturate(2.8) contrast(1.6) brightness(0.95) hue-rotate(5deg)"
+                        }} />
                       </div>
                     </div>
                     <label className="flex items-center gap-2 cursor-pointer p-3 rounded-lg" style={{background:"rgba(147,51,234,0.1)"}}>

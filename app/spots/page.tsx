@@ -45,7 +45,7 @@ export default function SpotsPage() {
   const spotReviews = reviews.filter((r) => r.spot === selectedSpot);
 
   return (
-    <div className="max-w-6xl mx-auto px-4 pb-24 md:pb-8 pt-6">
+    <div className="max-w-6xl mx-auto px-4 pb-4 pt-6">
       <div className="mb-8">
         <h1 className="text-3xl font-black mb-2">📍 スポットクチコミ</h1>
         <p className="text-gray-400">全国のライダーが厳選したおすすめスポット</p>

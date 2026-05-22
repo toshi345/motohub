@@ -107,7 +107,7 @@ export default function AchievementsPage() {
   const pct = achievements.length > 0 ? Math.round((unlocked.length / achievements.length) * 100) : 0;
 
   return (
-    <div className="max-w-4xl mx-auto px-4 pb-24 md:pb-8 pt-6">
+    <div className="max-w-4xl mx-auto px-4 pb-4 pt-6">
       <div className="mb-6">
         <h1 className="text-3xl font-black mb-1">🏆 実績・バッジ</h1>
         <p className="text-gray-400 text-sm">走行記録で解除される実績コレクション</p>

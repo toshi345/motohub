@@ -21,7 +21,7 @@ export default function ProfilePage() {
   const userPosts = mockPosts.slice(0, 2);
 
   return (
-    <div className="max-w-4xl mx-auto px-4 pb-24 md:pb-8 pt-6">
+    <div className="max-w-4xl mx-auto px-4 pb-4 pt-6">
       {/* Profile header */}
       <div className="card p-6 mb-6">
         <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5">
@@ -80,19 +80,20 @@ export default function ProfilePage() {
           <h2 className="font-bold flex items-center gap-2">
             🏍️ マイガレージ
           </h2>
-          <button className="text-sm text-[#ff6b00] hover:underline">＋ 愛車を追加</button>
+          <a href="/garage" className="text-sm text-[#ff6b00] hover:underline">＋ バイクを追加</a>
         </div>
-        <div className="flex items-center gap-4 p-4 bg-[#1a1a25] rounded-xl">
+        <a href="/garage" className="flex items-center gap-4 p-4 bg-[#1a1a25] rounded-xl hover:bg-[#202030] transition-colors">
           <div className="text-5xl">🏍️</div>
-          <div>
-            <div className="font-bold text-lg">{currentUser.bike}</div>
+          <div className="flex-1">
+            <div className="font-bold text-lg">{profile?.bike ?? currentUser.bike}</div>
             <div className="text-sm text-gray-400">2022年式 | 走行距離: 18,450 km</div>
             <div className="flex gap-2 mt-2">
-              <span className="tag bg-orange-500/20 text-orange-400">ネイキッド</span>
+              <span className="tag bg-orange-500/20 text-orange-400">{profile?.bikeType ?? "ネイキッド"}</span>
               <span className="tag bg-blue-500/20 text-blue-400">ツーリング</span>
             </div>
           </div>
-        </div>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5a5a7a" strokeWidth="2" strokeLinecap="round"><path d="M9 18l6-6-6-6"/></svg>
+        </a>
       </div>
 
       {/* Free notice */}

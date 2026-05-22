@@ -30,7 +30,7 @@ export default function HomePage() {
   });
 
   return (
-    <div className="max-w-6xl mx-auto px-4 pb-24 md:pb-8">
+    <div className="max-w-6xl mx-auto px-4 pb-4">
       {/* Hero */}
       <div className="relative rounded-2xl overflow-hidden mb-8 mt-6"
         style={{
@@ -51,9 +51,9 @@ export default function HomePage() {
             全国12,483人のライダーが参加中
           </div>
           <h1 className="text-4xl md:text-6xl font-black mb-4 leading-tight tracking-tight">
-            <span className="text-gradient">ライダーズ</span>
+            <span className="text-gradient">バイク乗り</span>
             <br />
-            <span className="text-white">プラットフォーム</span>
+            <span className="text-white">のためのアプリ</span>
           </h1>
           <p className="text-base md:text-lg max-w-lg" style={{color: "#a0a0c0"}}>
             走行記録・燃費管理・メンテナンス。
