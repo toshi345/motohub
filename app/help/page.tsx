@@ -1,6 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import {
+  PinIcon, ShieldIcon, UserIcon, BikeIcon, FuelIcon, TrophyIcon,
+  MapIcon, CheckIcon, SettingsIcon, ChartIcon,
+} from "@/components/Icons";
 
 type Section = "gps" | "faq" | "start";
 
@@ -69,9 +73,12 @@ export default function HelpPage() {
       {/* ── GPS設定 ── */}
       {section === "gps" && (
         <div className="space-y-5">
-          <div className="card p-4" style={{background:"rgba(255,107,0,0.08)", borderColor:"rgba(255,107,0,0.3)"}}>
-            <p className="text-sm font-bold text-[#ff6b00] mb-1">📍 GPS（位置情報）を許可してください</p>
-            <p className="text-sm text-gray-400">走行記録機能を使うには、ブラウザの位置情報許可が必要です。</p>
+          <div className="card p-4 flex items-start gap-3" style={{background:"rgba(255,107,0,0.08)", borderColor:"rgba(255,107,0,0.3)"}}>
+            <PinIcon size={22} color="#ff6b00" className="shrink-0 mt-0.5" />
+            <div>
+              <p className="text-base font-bold text-[#ff6b00] mb-1">GPS（位置情報）を許可してください</p>
+              <p className="text-base text-gray-400">走行記録機能を使うには、ブラウザの位置情報許可が必要です。</p>
+            </div>
           </div>
 
           {/* iPhone Safari */}
@@ -93,7 +100,7 @@ export default function HelpPage() {
                     style={{background:"rgba(255,107,0,0.2)", color:"#ff6b00"}}>{s.step}</div>
                   <div>
                     <p className="text-sm font-semibold">{s.title}</p>
-                    {s.desc && <p className="text-xs text-gray-500 mt-0.5">{s.desc}</p>}
+                    {s.desc && <p className="text-sm text-gray-500 mt-0.5">{s.desc}</p>}
                   </div>
                 </div>
               ))}
@@ -138,7 +145,7 @@ export default function HelpPage() {
                     style={{background:"rgba(74,222,128,0.2)", color:"#4ade80"}}>{s.step}</div>
                   <div>
                     <p className="text-sm font-semibold">{s.title}</p>
-                    {s.desc && <p className="text-xs text-gray-500 mt-0.5">{s.desc}</p>}
+                    {s.desc && <p className="text-sm text-gray-500 mt-0.5">{s.desc}</p>}
                   </div>
                 </div>
               ))}
@@ -166,14 +173,14 @@ export default function HelpPage() {
               <p>3. ページをリロードして再試行</p>
             </div>
             <div className="bg-[#1a1a25] rounded-xl p-3">
-              <p className="text-xs text-gray-500">※ PCのGPSはWi-Fiや電波塔の位置情報を使うため精度が低い場合があります。走行記録にはスマホ使用を推奨します。</p>
+              <p className="text-sm text-gray-500">※ PCのGPSはWi-Fiや電波塔の位置情報を使うため精度が低い場合があります。走行記録にはスマホ使用を推奨します。</p>
             </div>
           </div>
 
           {/* Wake Lock説明 */}
           <div className="card p-5" style={{borderColor:"rgba(16,185,129,0.3)", background:"rgba(16,185,129,0.04)"}}>
             <h3 className="font-bold mb-3 text-green-400">🔆 画面オフ防止機能について</h3>
-            <p className="text-sm text-gray-400 mb-3">
+            <p className="text-base text-gray-400 mb-3">
               GPS記録を開始すると「画面オフ防止 ON」が有効になります。
               これにより画面が消えずGPS記録が継続します。
             </p>
@@ -191,52 +198,32 @@ export default function HelpPage() {
         <div className="space-y-4">
           <div className="card p-5" style={{background:"linear-gradient(135deg, rgba(255,107,0,0.1), rgba(204,85,0,0.05))", borderColor:"rgba(255,107,0,0.3)"}}>
             <h2 className="font-black text-xl mb-1">MotoHubへようこそ！</h2>
-            <p className="text-sm text-gray-400">バイク乗りのための総合アプリです。まずはこの順番で設定しましょう。</p>
+            <p className="text-base text-gray-400">バイク乗りのための総合アプリです。まずはこの順番で設定しましょう。</p>
           </div>
 
-          {[
-            {
-              step: 1, icon: "👤", title: "プロフィールを設定",
-              desc: "マイページ → プロフィール編集 から名前・愛車・アバターを設定しましょう。",
-              link: "/profile",
-            },
-            {
-              step: 2, icon: "🏍️", title: "愛車をガレージに登録",
-              desc: "マイガレージ → バイクを追加 からメーカー・モデル・走行距離を登録します。",
-              link: "/garage",
-            },
-            {
-              step: 3, icon: "📍", title: "GPS走行記録を試す",
-              desc: "画面右下の🛣️ボタンをタップ → 記録開始。ツーリングの距離・速度を自動記録します。",
-              link: null,
-            },
-            {
-              step: 4, icon: "⛽", title: "給油を記録する",
-              desc: "燃費管理ページから給油量・金額を記録すると燃費が自動計算されます。",
-              link: "/fuel",
-            },
-            {
-              step: 5, icon: "🏆", title: "実績・バッジを確認",
-              desc: "走行記録が増えると自動でバッジが解除されます。16種類のバッジを集めましょう！",
-              link: "/achievements",
-            },
-          ].map((item) => (
+          {([
+            { step: 1, Icon: UserIcon,   title: "プロフィールを設定",    desc: "マイページ → プロフィール編集 から名前・愛車・アバターを設定しましょう。",               link: "/profile" },
+            { step: 2, Icon: BikeIcon,   title: "愛車をガレージに登録",  desc: "マイガレージ → バイクを追加 からメーカー・モデル・走行距離を登録します。",              link: "/garage" },
+            { step: 3, Icon: PinIcon,    title: "GPS走行記録を試す",      desc: "画面右下のGPSボタンをタップ → 記録開始。ツーリングの距離・速度を自動記録します。",  link: null },
+            { step: 4, Icon: FuelIcon,   title: "給油を記録する",         desc: "燃費管理ページから給油量・金額を記録すると燃費が自動計算されます。",                  link: "/fuel" },
+            { step: 5, Icon: TrophyIcon, title: "実績・バッジを確認",     desc: "走行記録が増えると自動でバッジが解除されます。16種類のバッジを集めましょう！",         link: "/achievements" },
+          ] as { step: number; Icon: React.ComponentType<{size?:number;color?:string}>; title: string; desc: string; link: string|null }[]).map((item) => (
             <div key={item.step} className="card p-5 flex gap-4 items-start hover:border-[#3a3a4a] transition-colors">
-              <div className="w-10 h-10 rounded-full flex items-center justify-center text-xl shrink-0"
+              <div className="w-11 h-11 rounded-full flex items-center justify-center shrink-0"
                 style={{background:"rgba(255,107,0,0.15)"}}>
-                {item.icon}
+                <item.Icon size={22} color="#ff6b00" />
               </div>
               <div className="flex-1">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-xs font-bold px-2 py-0.5 rounded-full" style={{background:"rgba(255,107,0,0.15)", color:"#ff6b00"}}>
+                <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                  <span className="text-sm font-bold px-2.5 py-1 rounded-full" style={{background:"rgba(255,107,0,0.15)", color:"#ff6b00"}}>
                     STEP {item.step}
                   </span>
-                  <span className="font-bold text-sm">{item.title}</span>
+                  <span className="font-bold text-base">{item.title}</span>
                 </div>
-                <p className="text-xs text-gray-400">{item.desc}</p>
+                <p className="text-base text-gray-400">{item.desc}</p>
               </div>
               {item.link && (
-                <a href={item.link} className="btn-primary text-xs px-3 py-1.5 shrink-0">開く</a>
+                <a href={item.link} className="btn-primary text-sm px-4 py-2 shrink-0">開く</a>
               )}
             </div>
           ))}
@@ -252,13 +239,13 @@ export default function HelpPage() {
                 onClick={() => setOpenFaq(openFaq === i ? null : i)}
                 className="w-full flex items-center justify-between p-4 text-left"
               >
-                <span className="font-semibold text-sm pr-4">{item.q}</span>
+                <span className="font-semibold text-base pr-4">{item.q}</span>
                 <span style={{ fontSize: "18px", color: "#ff6b00", flexShrink: 0, transition: "transform 0.2s",
                   transform: openFaq === i ? "rotate(45deg)" : "none" }}>＋</span>
               </button>
               {openFaq === i && (
                 <div className="px-4 pb-4 border-t border-[#252535]">
-                  <p className="text-sm text-gray-400 leading-relaxed pt-3">{item.a}</p>
+                  <p className="text-base text-gray-400 leading-relaxed pt-3">{item.a}</p>
                 </div>
               )}
             </div>
@@ -266,7 +253,7 @@ export default function HelpPage() {
 
           <div className="card p-5 mt-4" style={{borderColor:"rgba(255,107,0,0.3)", background:"rgba(255,107,0,0.05)"}}>
             <p className="font-bold mb-2">🙋 解決しない場合は</p>
-            <p className="text-sm text-gray-400">アプリを更新（ブラウザをリロード）してお試しください。それでも解決しない場合は、ブラウザのキャッシュをクリアしてみてください。</p>
+            <p className="text-base text-gray-400">アプリを更新（ブラウザをリロード）してお試しください。それでも解決しない場合は、ブラウザのキャッシュをクリアしてみてください。</p>
           </div>
         </div>
       )}

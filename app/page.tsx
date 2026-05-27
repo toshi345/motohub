@@ -51,16 +51,16 @@ export default function HomePage() {
             <span className="w-1.5 h-1.5 rounded-full bg-[#ff6b00] pulse-primary" />
             全国12,483人のライダーが参加中
           </div>
-          <h1 className="text-4xl md:text-6xl font-black mb-4 leading-tight tracking-tight">
+          {/* 1行に収まるようclampでフォントサイズを自動調整 */}
+          <h1 className="font-black mb-4 leading-tight tracking-tight whitespace-nowrap"
+            style={{ fontSize: "clamp(1.4rem, 7vw, 4rem)" }}>
             <span style={{
               background: "linear-gradient(135deg, #ff6b00 0%, #ff8c38 60%, #ffb347 100%)",
               WebkitBackgroundClip: "text",
               WebkitTextFillColor: "transparent",
               backgroundClip: "text",
               color: "#ff6b00",
-              display: "inline-block",
             }}>バイク乗り</span>
-            <br />
             <span style={{color: "#ffffff"}}>のためのアプリ</span>
           </h1>
           <p className="text-base md:text-lg max-w-lg" style={{color: "#a0a0c0"}}>

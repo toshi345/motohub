@@ -4,6 +4,26 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
 import { loadProfile, getAvatarUrl } from "@/components/ProfileEditModal";
+import {
+  HomeIcon, MapIcon, PinIcon, EditIcon, ChartIcon, BikeIcon,
+  FuelIcon, MoneyIcon, TrophyIcon, UserIcon, HeartIcon, ShieldIcon,
+} from "@/components/Icons";
+
+// ドロワーメニュー用アイコンマップ
+const DRAWER_ICONS: Record<string, React.ComponentType<{size?:number;color?:string}>> = {
+  "/":             HomeIcon,
+  "/routes":       MapIcon,
+  "/spots":        PinIcon,
+  "/create":       EditIcon,
+  "/riding-log":   ChartIcon,
+  "/garage":       BikeIcon,
+  "/fuel":         FuelIcon,
+  "/expenses":     MoneyIcon,
+  "/achievements": TrophyIcon,
+  "/profile":      UserIcon,
+  "/support":      HeartIcon,
+  "/help":         ShieldIcon,
+};
 
 // SVG icons for bottom nav
 const NavIcons: Record<string, (active: boolean) => React.ReactNode> = {
@@ -201,7 +221,11 @@ export default function Navbar() {
                       onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = "#fff"; }}
                       onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = pathname === item.href ? "#ff6b00" : "#a0a0c0"; }}
                     >
-                      <span className="text-base">{item.icon}</span>
+                      <span style={{ width: "20px", display: "flex", alignItems: "center" }}>
+                        {DRAWER_ICONS[item.href]
+                          ? (() => { const I = DRAWER_ICONS[item.href]; return <I size={16} color="currentColor" />; })()
+                          : <span style={{fontSize:"14px"}}>{item.icon}</span>}
+                      </span>
                       {item.label}
                     </Link>
                   ))}
@@ -294,7 +318,13 @@ export default function Navbar() {
                           fontSize: "15px", marginBottom: "2px",
                         }}
                       >
-                        <span style={{ fontSize: "20px", width: "28px", textAlign: "center" }}>{item.icon}</span>
+                        {/* SVGアイコン（なければ絵文字フォールバック） */}
+                        <span style={{ width: "28px", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                          {DRAWER_ICONS[item.href]
+                            ? (() => { const I = DRAWER_ICONS[item.href]; return <I size={20} color={active ? "#ff6b00" : "#a0a0c0"} />; })()
+                            : <span style={{ fontSize: "18px" }}>{item.icon}</span>
+                          }
+                        </span>
                         {item.label}
                         {active && <span style={{ marginLeft: "auto", width: "6px", height: "6px", borderRadius: "50%", background: "#ff6b00", flexShrink: 0 }} />}
                       </Link>

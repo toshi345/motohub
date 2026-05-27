@@ -456,46 +456,46 @@ export default function GPSTracker() {
               {/* Recording / Paused screen */}
               {(status === "recording" || status === "paused") && (
                 <div className="space-y-3">
-                  {/* Live stats */}
-                  <div className="grid grid-cols-3 gap-2 text-center text-xs">
-                    <div className="bg-[#1a1a25] rounded-lg p-2">
-                      <div className="font-black text-sm" style={{color:"#ff6b00"}}>{formatDuration(elapsed)}</div>
-                      <div className="text-gray-500">時間</div>
+                  {/* Live stats — 文字を大きく */}
+                  <div className="grid grid-cols-3 gap-2 text-center">
+                    <div style={{background:"#1a1a25", borderRadius:"10px", padding:"10px 4px"}}>
+                      <div style={{fontSize:"22px", fontWeight:900, color:"#ff6b00", lineHeight:1}}>{formatDuration(elapsed)}</div>
+                      <div style={{fontSize:"11px", color:"#6b7280", marginTop:"4px", fontWeight:600}}>時間</div>
                     </div>
-                    <div className="bg-[#1a1a25] rounded-lg p-2">
-                      <div className="font-black text-sm" style={{color:"#ff6b00"}}>{distStr}</div>
-                      <div className="text-gray-500">距離</div>
+                    <div style={{background:"#1a1a25", borderRadius:"10px", padding:"10px 4px"}}>
+                      <div style={{fontSize:"22px", fontWeight:900, color:"#ff6b00", lineHeight:1}}>{distStr}</div>
+                      <div style={{fontSize:"11px", color:"#6b7280", marginTop:"4px", fontWeight:600}}>距離</div>
                     </div>
-                    <div className="bg-[#1a1a25] rounded-lg p-2">
-                      <div className="font-black text-sm" style={{color:"#ff6b00"}}>
-                        {currentSpeed != null ? `${currentSpeed}` : "--"}
-                        <span className="text-xs font-normal text-gray-500"> km/h</span>
+                    <div style={{background:"#1a1a25", borderRadius:"10px", padding:"10px 4px"}}>
+                      <div style={{fontSize:"22px", fontWeight:900, color:"#ff6b00", lineHeight:1}}>
+                        {currentSpeed != null ? currentSpeed : "--"}
+                        <span style={{fontSize:"11px", fontWeight:500, color:"#6b7280"}}> km/h</span>
                       </div>
-                      <div className="text-gray-500">速度</div>
+                      <div style={{fontSize:"11px", color:"#6b7280", marginTop:"4px", fontWeight:600}}>速度</div>
                     </div>
                   </div>
 
                   {/* GPS accuracy + Wake Lock status */}
-                  <div className="flex items-center justify-center gap-3 text-xs">
+                  <div style={{display:"flex", alignItems:"center", justifyContent:"center", gap:"8px", flexWrap:"wrap"}}>
                     {gpsAccuracy != null && (
-                      <span className="text-gray-500">
+                      <span style={{fontSize:"13px", color:"#6b7280"}}>
                         GPS ±{gpsAccuracy}m
                         {mode === "auto" && !sessionRef.current?.points.length && status === "recording" && (
-                          <span className="text-yellow-400 ml-1">走行待機中...</span>
+                          <span style={{color:"#facc15", marginLeft:"6px"}}>走行待機中...</span>
                         )}
                       </span>
                     )}
                     {/* Wake Lock インジケーター */}
                     <span
                       style={{
-                        display: "inline-flex", alignItems: "center", gap: "4px",
-                        padding: "2px 8px", borderRadius: "999px",
-                        fontSize: "11px", fontWeight: 600,
+                        display: "inline-flex", alignItems: "center", gap: "5px",
+                        padding: "4px 10px", borderRadius: "999px",
+                        fontSize: "12px", fontWeight: 700,
                         background: wakeLockActive ? "rgba(16,185,129,0.15)" : "rgba(107,114,128,0.15)",
                         color: wakeLockActive ? "#10b981" : "#6b7280",
                       }}
                     >
-                      <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: wakeLockActive ? "#10b981" : "#6b7280", display: "inline-block" }} />
+                      <span style={{ width: "7px", height: "7px", borderRadius: "50%", background: wakeLockActive ? "#10b981" : "#6b7280", display: "inline-block" }} />
                       {wakeLockActive ? "画面オフ防止 ON" : "画面オフ防止 OFF"}
                     </span>
                   </div>
@@ -542,10 +542,17 @@ export default function GPSTracker() {
           </div>
         )}
 
-        {/* FAB button */}
+        {/* FAB button — 完了状態のタップでリセット */}
         <button
-          onClick={() => setOpen(!open)}
-          title="GPS走行記録"
+          onClick={() => {
+            if (status === "done") {
+              resetAll();   // 完了アイコンタップ → 初期状態へ
+              setOpen(false);
+            } else {
+              setOpen(!open);
+            }
+          }}
+          title={status === "done" ? "タップしてリセット" : "GPS走行記録"}
           style={{
             width: "60px", height: "60px",
             borderRadius: "18px",
