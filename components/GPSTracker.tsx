@@ -34,8 +34,8 @@ export default function GPSTracker() {
   const watchIdRef = useRef<number | null>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const sessionRef = useRef<TrackSession | null>(null);
-  const startTimeRef = useRef<number>(0);
   const autoStartedRef = useRef(false);
+  const lastRawPosRef = useRef<{ lat: number; lng: number; timestamp: number } | null>(null);
   const wakeLockRef = useRef<WakeLockSentinel | null>(null);
   const [wakeLockActive, setWakeLockActive] = useState(false);
 
@@ -73,8 +73,8 @@ export default function GPSTracker() {
     return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
   }, [status]);
 
-  // Keep sessionRef in sync
-  useEffect(() => { sessionRef.current = session; }, [session]);
+  // posUpdateCount: handlePosition が呼ばれた回数（GPS動作確認用）
+  const [posUpdateCount, setPosUpdateCount] = useState(0);
 
   const clearTimer = () => {
     if (timerRef.current) { clearInterval(timerRef.current); timerRef.current = null; }
@@ -98,8 +98,20 @@ export default function GPSTracker() {
   const handlePosition = useCallback((pos: GeolocationPosition) => {
     const { latitude: lat, longitude: lng, speed, altitude, accuracy } = pos.coords;
     setGpsAccuracy(Math.round(accuracy));
+    setPosUpdateCount((c) => c + 1);
 
-    const speedKmh = speed != null ? speed * 3.6 : null;
+    // 端末が speed を返さない場合のフォールバック: 前回位置からの移動距離/経過時間で速度を算出
+    let speedKmh: number | null = speed != null ? speed * 3.6 : null;
+    if (speedKmh == null && lastRawPosRef.current) {
+      const dtSec = (Date.now() - lastRawPosRef.current.timestamp) / 1000;
+      if (dtSec > 0.5) {
+        const distM = haversineKm(lastRawPosRef.current.lat, lastRawPosRef.current.lng, lat, lng) * 1000;
+        // 速度計算は3m以上の移動で行う（GPSジッターによる誤検知防止）
+        speedKmh = distM >= 3 ? (distM / 1000 / dtSec) * 3600 : 0;
+      }
+    }
+    lastRawPosRef.current = { lat, lng, timestamp: Date.now() };
+
     setCurrentSpeed(speedKmh != null ? Math.round(speedKmh) : null);
 
     // Auto mode: start recording when moving
@@ -109,7 +121,17 @@ export default function GPSTracker() {
       return;
     }
 
-    if (!sessionRef.current || sessionRef.current.stoppedAt) return;
+    // sessionRef.current を直接参照（React state の非同期更新を介さないため常に最新）
+    const curr = sessionRef.current;
+    if (!curr || curr.stoppedAt) return;
+
+    // Filter GPS jitter
+    const pts = curr.points;
+    if (pts.length > 0) {
+      const last = pts[pts.length - 1];
+      const distM = haversineKm(last.lat, last.lng, lat, lng) * 1000;
+      if (distM < MIN_DISTANCE_M) return;
+    }
 
     const newPoint: TrackPoint = {
       lat, lng,
@@ -118,32 +140,26 @@ export default function GPSTracker() {
       altitude: altitude ?? null,
     };
 
-    setSession((prev) => {
-      if (!prev) return prev;
-      const pts = prev.points;
-      // Filter GPS jitter
-      if (pts.length > 0) {
-        const last = pts[pts.length - 1];
-        const distM = haversineKm(last.lat, last.lng, lat, lng) * 1000;
-        if (distM < MIN_DISTANCE_M) return prev;
-      }
-      const newPts = [...pts, newPoint];
-      const dist = calcTotalDistance(newPts);
-      const spd = speed != null ? speed * 3.6 : 0;
-      const updated = {
-        ...prev,
-        points: newPts,
-        totalDistanceKm: dist,
-        maxSpeedKmh: Math.max(prev.maxSpeedKmh, spd),
-      };
-      setActiveSession(updated);
-      setCurrentDist(dist);
-      return updated;
-    });
+    const newPts = [...pts, newPoint];
+    const dist = calcTotalDistance(newPts);
+    const spd = speedKmh ?? 0;
+    const updated: TrackSession = {
+      ...curr,
+      points: newPts,
+      totalDistanceKm: dist,
+      maxSpeedKmh: Math.max(curr.maxSpeedKmh, spd),
+    };
+
+    // sessionRef を同期更新 → stopRecording が最新データを確実に参照できる
+    sessionRef.current = updated;
+    // localStorage に保存
+    setActiveSession(updated);
+    // UI 更新（副作用を state updater の外で呼ぶことで Strict Mode の二重実行問題を回避）
+    setCurrentDist(dist);
+    setSession(updated);
   }, [mode]);
 
   const startActualRecording = (lat?: number, lng?: number, speed?: number | null, altitude?: number | null) => {
-    startTimeRef.current = Date.now();
     const newSession: TrackSession = {
       id: `track_${Date.now()}`,
       startedAt: Date.now(),
@@ -167,6 +183,8 @@ export default function GPSTracker() {
       return;
     }
 
+    lastRawPosRef.current = null;
+
     if (mode === "manual") {
       startActualRecording();
     } else {
@@ -180,9 +198,9 @@ export default function GPSTracker() {
     watchIdRef.current = navigator.geolocation.watchPosition(
       handlePosition,
       (err) => {
-        if (err.code === 1) setError("GPS許可が必要です。ブラウザの設定を確認してください");
-        else if (err.code === 2) setError("GPS信号を取得できません");
-        else setError("GPS取得エラー");
+        if (err.code === 1) setError("GPSの利用が許可されていません。ブラウザの位置情報設定を確認してください（http接続の場合、安全な接続(HTTPS)でないとGPSが使えないことがあります）");
+        else if (err.code === 2) setError("GPS信号を取得できません。屋外の見晴らしの良い場所でお試しください");
+        else setError("GPS取得エラー（タイムアウト）。電波状況の良い場所で再度お試しください");
       },
       { enableHighAccuracy: true, maximumAge: 0, timeout: 10000 }
     );
@@ -211,13 +229,18 @@ export default function GPSTracker() {
   const stopRecording = () => {
     stopWatch();
     clearTimer();
-    releaseWakeLock(); // 終了したら画面オフを解除
-    const finished = sessionRef.current
-      ? { ...sessionRef.current, stoppedAt: Date.now() }
+    releaseWakeLock();
+    // sessionRef.current は handlePosition で同期更新済み。
+    // 万が一 null の場合は localStorage の active session をフォールバックとして使う。
+    const finalSession = sessionRef.current ?? getActiveSession();
+    const finished = finalSession
+      ? { ...finalSession, stoppedAt: Date.now() }
       : null;
     if (finished) {
       saveSession(finished);
       setCompletedSession(finished);
+      sessionRef.current = finished;
+      setSession(finished);
     }
     setActiveSession(null);
     setStatus("done");
@@ -235,6 +258,8 @@ export default function GPSTracker() {
     setCurrentSpeed(null);
     setCompletedSession(null);
     autoStartedRef.current = false;
+    lastRawPosRef.current = null;
+    setPosUpdateCount(0);
     setError(null);
   };
 
@@ -367,6 +392,30 @@ export default function GPSTracker() {
                 </div>
               )}
 
+              {/* Done but no data was recorded */}
+              {status === "done" && !completedSession && (
+                <div className="space-y-3 text-center py-2">
+                  <div className="text-4xl mb-1">📡</div>
+                  <div className="font-bold" style={{color:"#f87171"}}>記録データがありません</div>
+                  <p style={{fontSize:"12px", color:"#9ca3af", lineHeight:1.6, textAlign:"left"}}>
+                    位置情報を取得できなかったため、走行記録が保存されませんでした。
+                    {mode === "auto" ? (
+                      <>
+                        <br/>「走行で自動開始」モードは時速{AUTO_SPEED_THRESHOLD_KMH}km以上で走り出すと記録が始まります。屋内や停止中のテストでは「手動ON/OFF」モードをお試しください。
+                      </>
+                    ) : (
+                      <>
+                        <br/>GPSの電波が届く屋外で、位置情報の利用を許可してから再度お試しください。
+                      </>
+                    )}
+                  </p>
+                  {error && <p style={{fontSize:"12px", color:"#f87171", background:"rgba(239,68,68,0.1)", borderRadius:"8px", padding:"8px", textAlign:"left"}}>{error}</p>}
+                  <button onClick={resetAll} className="btn-ghost w-full text-sm">
+                    閉じる
+                  </button>
+                </div>
+              )}
+
               {/* Idle screen */}
               {status === "idle" && (
                 <div style={{display:"flex", flexDirection:"column", gap:"16px"}}>
@@ -475,15 +524,25 @@ export default function GPSTracker() {
                     </div>
                   </div>
 
-                  {/* GPS accuracy + Wake Lock status */}
+                  {/* GPS accuracy + diagnostics + Wake Lock status */}
                   <div style={{display:"flex", alignItems:"center", justifyContent:"center", gap:"8px", flexWrap:"wrap"}}>
-                    {gpsAccuracy != null && (
-                      <span style={{fontSize:"13px", color:"#6b7280"}}>
-                        GPS ±{gpsAccuracy}m
-                        {mode === "auto" && !sessionRef.current?.points.length && status === "recording" && (
+                    {gpsAccuracy != null ? (
+                      <span style={{fontSize:"12px", color:"#6b7280"}}>
+                        GPS±{gpsAccuracy}m
+                        <span style={{color: posUpdateCount > 0 ? "#10b981" : "#f87171", marginLeft:"6px"}}>
+                          受信{posUpdateCount}回
+                        </span>
+                        {session && (
+                          <span style={{color:"#ff6b00", marginLeft:"6px"}}>
+                            {session.points.length}pt
+                          </span>
+                        )}
+                        {mode === "auto" && !sessionRef.current && status === "recording" && (
                           <span style={{color:"#facc15", marginLeft:"6px"}}>走行待機中...</span>
                         )}
                       </span>
+                    ) : (
+                      <span style={{fontSize:"12px", color:"#f87171"}}>GPS信号取得中...</span>
                     )}
                     {/* Wake Lock インジケーター */}
                     <span

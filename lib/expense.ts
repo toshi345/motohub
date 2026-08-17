@@ -97,16 +97,16 @@ export function calcExpenseSummary(records: ExpenseRecord[]): ExpenseSummary {
 }
 
 export const MOCK_EXPENSES: ExpenseRecord[] = [
-  { id: "e1", bikeId: "bike_demo_1", category: "fuel",       amount: 2150, date: "2025-11-01", title: "給油 エネオス",     isTouring: false },
-  { id: "e2", bikeId: "bike_demo_1", category: "highway",    amount: 3200, date: "2025-10-28", title: "箱根ツーリング 高速", isTouring: true, note: "往復" },
-  { id: "e3", bikeId: "bike_demo_1", category: "fuel",       amount: 1882, date: "2025-10-18", title: "給油 出光",         isTouring: false },
-  { id: "e4", bikeId: "bike_demo_1", category: "maintenance", amount: 8800, date: "2025-10-10", title: "オイル交換 工賃込み", isTouring: false },
-  { id: "e5", bikeId: "bike_demo_1", category: "parts",      amount: 4500, date: "2025-10-05", title: "チェーンオイル・タオル等", isTouring: false },
-  { id: "e6", bikeId: "bike_demo_1", category: "fuel",       amount: 2240, date: "2025-10-05", title: "給油 シェル",       isTouring: true },
-  { id: "e7", bikeId: "bike_demo_1", category: "parking",    amount: 500,  date: "2025-10-05", title: "道の駅 駐輪場",    isTouring: true },
-  { id: "e8", bikeId: "bike_demo_1", category: "food",       amount: 1200, date: "2025-10-05", title: "道の駅 ランチ",    isTouring: true },
-  { id: "e9", bikeId: "bike_demo_1", category: "gear",       amount: 12800, date: "2025-09-15", title: "グローブ購入",   isTouring: false },
-  { id: "e10",bikeId: "bike_demo_1", category: "fuel",       amount: 1782, date: "2025-09-20", title: "給油 コスモ",      isTouring: false },
-  { id: "e11",bikeId: "bike_demo_1", category: "fuel",       amount: 2028, date: "2025-09-07", title: "給油 エネオス",    isTouring: false },
-  { id: "e12",bikeId: "bike_demo_1", category: "insurance",  amount: 14000,date: "2025-08-01", title: "任意保険 年払い分割", isTouring: false },
+  { id: "e1", bikeId: "bike_demo_1", category: "fuel",       amount: 2150, date: "2026-08-08", title: "給油 エネオス",     isTouring: false },
+  { id: "e2", bikeId: "bike_demo_1", category: "highway",    amount: 3200, date: "2026-07-28", title: "箱根ツーリング 高速", isTouring: true, note: "往復" },
+  { id: "e3", bikeId: "bike_demo_1", category: "fuel",       amount: 1882, date: "2026-07-18", title: "給油 出光",         isTouring: false },
+  { id: "e4", bikeId: "bike_demo_1", category: "maintenance", amount: 8800, date: "2026-06-10", title: "オイル交換 工賃込み", isTouring: false },
+  { id: "e5", bikeId: "bike_demo_1", category: "parts",      amount: 4500, date: "2026-06-05", title: "チェーンオイル・タオル等", isTouring: false },
+  { id: "e6", bikeId: "bike_demo_1", category: "fuel",       amount: 2240, date: "2026-06-05", title: "給油 シェル",       isTouring: true },
+  { id: "e7", bikeId: "bike_demo_1", category: "parking",    amount: 500,  date: "2026-06-05", title: "道の駅 駐輪場",    isTouring: true },
+  { id: "e8", bikeId: "bike_demo_1", category: "food",       amount: 1200, date: "2026-06-05", title: "道の駅 ランチ",    isTouring: true },
+  { id: "e9", bikeId: "bike_demo_1", category: "gear",       amount: 12800, date: "2026-05-15", title: "グローブ購入",   isTouring: false },
+  { id: "e10",bikeId: "bike_demo_1", category: "fuel",       amount: 1782, date: "2026-05-20", title: "給油 コスモ",      isTouring: false },
+  { id: "e11",bikeId: "bike_demo_1", category: "fuel",       amount: 2028, date: "2026-04-07", title: "給油 エネオス",    isTouring: false },
+  { id: "e12",bikeId: "bike_demo_1", category: "insurance",  amount: 14000,date: "2026-03-01", title: "任意保険 年払い分割", isTouring: false },
 ];

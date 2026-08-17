@@ -85,9 +85,9 @@ export const MOCK_BIKES: Bike[] = [
     purchasedAt: "2022-04-01",
     notes: "大事な相棒。年2回は遠方ツーリングしてる。",
     maintenanceRecords: [
-      { id: "m1", type: "oil",   label: "エンジンオイル",   km: 16000, date: "2025-08-10", note: "Motul 5100 10W-40", nextKm: 19000 },
-      { id: "m2", type: "chain", label: "チェーン",         km: 15000, date: "2025-07-01", note: "RK製に交換",          nextKm: 20000 },
-      { id: "m3", type: "tire_rear", label: "後タイヤ", km: 12000, date: "2025-04-15", note: "PIRELLI ANGEL GT2", nextKm: 19000 },
+      { id: "m1", type: "oil",   label: "エンジンオイル",   km: 16000, date: "2026-07-10", note: "Motul 5100 10W-40", nextKm: 19000 },
+      { id: "m2", type: "chain", label: "チェーン",         km: 15000, date: "2026-05-01", note: "RK製に交換",          nextKm: 20000 },
+      { id: "m3", type: "tire_rear", label: "後タイヤ", km: 12000, date: "2026-02-15", note: "PIRELLI ANGEL GT2", nextKm: 19000 },
     ],
   },
 ];

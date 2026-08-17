@@ -229,7 +229,13 @@ export default function RidingLogPage() {
     setSessions(loadSessions());
     setLibrary(loadRouteLibrary());
   };
-  useEffect(refresh, []);
+  useEffect(() => {
+    refresh();
+    // ページが非表示から表示に戻ったとき（GPS記録後など）も最新データを読み込む
+    const onVisible = () => { if (document.visibilityState === "visible") refresh(); };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => document.removeEventListener("visibilitychange", onVisible);
+  }, []);
 
   const stats = calcStats(sessions);
 

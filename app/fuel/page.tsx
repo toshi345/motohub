@@ -97,6 +97,7 @@ export default function FuelPage() {
     const bike = bikes.find((b) => b.id === selectedBikeId);
     setForm({ ...emptyForm, odometer: bike?.currentKm.toString() ?? "" });
     setEditId(null);
+    setAutoCalc("none");
     setShowForm(true);
   };
 
@@ -107,6 +108,7 @@ export default function FuelPage() {
       isFull: r.isFull, station: r.station ?? "", note: r.note ?? "",
     });
     setEditId(r.id);
+    setAutoCalc("none");
     setShowForm(true);
   };
 
@@ -141,16 +143,18 @@ export default function FuelPage() {
     }));
   })();
 
-  // Per-record efficiency
-  const efficiencies = (() => {
+  // Per-record efficiency — record.id をキーにすることで表示順に依存しないマッピング
+  const efficiencyMap = (() => {
     const sorted = [...records].sort((a, b) => a.odometer - b.odometer);
     const full = sorted.filter((r) => r.isFull);
-    return full.map((r, i) => {
-      if (i === 0) return null;
+    const map = new Map<string, number | null>();
+    full.forEach((r, i) => {
+      if (i === 0) { map.set(r.id, null); return; }
       const prev = full[i - 1];
       const km = r.odometer - prev.odometer;
-      return km > 0 && r.liters > 0 ? parseFloat((km / r.liters).toFixed(1)) : null;
+      map.set(r.id, km > 0 && r.liters > 0 ? parseFloat((km / r.liters).toFixed(1)) : null);
     });
+    return map;
   })();
 
   return (
@@ -225,8 +229,8 @@ export default function FuelPage() {
             <button onClick={openAdd} className="btn-primary mt-3 text-sm">最初の給油を記録する</button>
           </div>
         ) : (
-          records.map((r, i) => {
-            const eff = r.isFull ? efficiencies[records.filter(x => x.isFull).indexOf(r)] : null;
+          records.map((r) => {
+            const eff = r.isFull ? (efficiencyMap.get(r.id) ?? null) : null;
             return (
               <div key={r.id} className="card p-4">
                 <div className="flex items-start gap-3">

@@ -70,23 +70,24 @@ export function calcFuelStats(records: FuelRecord[]): FuelStats {
   const allLiters = records.reduce((s, r) => s + r.liters, 0);
   const allCost = records.reduce((s, r) => s + r.totalCost, 0);
   const avgFuelEfficiency = totalLiters > 0 ? totalDistance / totalLiters : 0;
-  const costPerKm = totalDistance > 0 ? allCost / (records.reduce((s,r) => s + (r.odometer), 0) > 0 ? totalDistance : 1) : 0;
+  // 重み付き平均単価(¥/L) ÷ 平均燃費(km/L) = 燃料コスト(¥/km)
+  const costPerKm = avgFuelEfficiency > 0 && allLiters > 0 ? (allCost / allLiters) / avgFuelEfficiency : 0;
 
   return {
     avgFuelEfficiency,
     totalLiters: allLiters,
     totalCost: allCost,
     totalDistance,
-    costPerKm: avgFuelEfficiency > 0 ? (records.reduce((s,r)=>s+r.pricePerLiter,0)/records.length) / avgFuelEfficiency : 0,
+    costPerKm,
     lastRecord: sorted[sorted.length - 1],
     records: sorted.reverse(),
   };
 }
 
 export const MOCK_FUEL_RECORDS: FuelRecord[] = [
-  { id: "f1", bikeId: "bike_demo_1", date: "2025-11-01", liters: 12.5, pricePerLiter: 172, totalCost: 2150, odometer: 18450, isFull: true, station: "エネオス 環状8号店", note: "ツーリング前に満タン" },
-  { id: "f2", bikeId: "bike_demo_1", date: "2025-10-18", liters: 11.2, pricePerLiter: 168, totalCost: 1882, odometer: 18120, isFull: true, station: "出光 青梅街道店" },
-  { id: "f3", bikeId: "bike_demo_1", date: "2025-10-05", liters: 13.1, pricePerLiter: 171, totalCost: 2240, odometer: 17780, isFull: true, station: "シェル 調布IC前" },
-  { id: "f4", bikeId: "bike_demo_1", date: "2025-09-20", liters: 10.8, pricePerLiter: 165, totalCost: 1782, odometer: 17420, isFull: true, station: "コスモ石油 府中店" },
-  { id: "f5", bikeId: "bike_demo_1", date: "2025-09-07", liters: 12.0, pricePerLiter: 169, totalCost: 2028, odometer: 17050, isFull: true, station: "エネオス 環状8号店" },
+  { id: "f1", bikeId: "bike_demo_1", date: "2026-08-05", liters: 12.5, pricePerLiter: 172, totalCost: 2150, odometer: 18450, isFull: true, station: "エネオス 環状8号店", note: "ツーリング前に満タン" },
+  { id: "f2", bikeId: "bike_demo_1", date: "2026-07-05", liters: 11.2, pricePerLiter: 168, totalCost: 1882, odometer: 18120, isFull: true, station: "出光 青梅街道店" },
+  { id: "f3", bikeId: "bike_demo_1", date: "2026-06-10", liters: 13.1, pricePerLiter: 171, totalCost: 2240, odometer: 17780, isFull: true, station: "シェル 調布IC前" },
+  { id: "f4", bikeId: "bike_demo_1", date: "2026-05-20", liters: 10.8, pricePerLiter: 165, totalCost: 1782, odometer: 17420, isFull: true, station: "コスモ石油 府中店" },
+  { id: "f5", bikeId: "bike_demo_1", date: "2026-04-15", liters: 12.0, pricePerLiter: 169, totalCost: 2028, odometer: 17050, isFull: true, station: "エネオス 環状8号店" },
 ];

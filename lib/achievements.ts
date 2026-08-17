@@ -43,22 +43,24 @@ export function calcStats(sessions: TrackSession[]): RidingStats {
   const maxSpeedKmh = Math.max(0, ...completed.map((r) => r.maxSpeedKmh));
   const totalDurationMs = completed.reduce((s, r) => s + ((r.stoppedAt ?? 0) - r.startedAt), 0);
 
-  // Streak: count consecutive days with at least one ride
-  const rideDays = new Set(completed.map((r) => new Date(r.startedAt).toDateString()));
-  let streak = 0, maxStreak = 0, cur = 0;
-  const sorted = [...rideDays].sort();
+  // Streak: ISO形式 "YYYY-MM-DD" でソートすることで正確な時系列順を保証
+  const rideDays = new Set(
+    completed.map((r) => {
+      const d = new Date(r.startedAt);
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+    })
+  );
+  let maxStreak = 0, cur = 0;
+  const sorted = [...rideDays].sort(); // ISO日付は辞書順 = 時系列順
   sorted.forEach((d, i) => {
     if (i === 0) { cur = 1; } else {
-      const prev = new Date(sorted[i - 1]);
-      const curr = new Date(d);
-      const diff = (curr.getTime() - prev.getTime()) / 86400000;
+      const diff = (new Date(d).getTime() - new Date(sorted[i - 1]).getTime()) / 86400000;
       cur = diff === 1 ? cur + 1 : 1;
     }
     maxStreak = Math.max(maxStreak, cur);
   });
-  streak = maxStreak;
 
-  return { totalDistanceKm, totalRides: completed.length, maxSingleDistanceKm, maxSpeedKmh, totalDurationMs, longestStreakDays: streak };
+  return { totalDistanceKm, totalRides: completed.length, maxSingleDistanceKm, maxSpeedKmh, totalDurationMs, longestStreakDays: maxStreak };
 }
 
 export const ACHIEVEMENTS: Achievement[] = [

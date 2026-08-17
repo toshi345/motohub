@@ -55,7 +55,7 @@ export default function RootLayout({
         }}
           className="md:block"
         >
-          <p>© 2025 MotoHub — バイク乗りのコミュニティ</p>
+          <p>© {new Date().getFullYear()} MotoHub — バイク乗りのコミュニティ</p>
         </footer>
         <GPSTracker />
         <Toast />

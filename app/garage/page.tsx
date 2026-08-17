@@ -133,7 +133,8 @@ export default function GaragePage() {
   const submitBike = () => {
     if (!bikeForm.make || !bikeForm.model) return;
     if (editingBikeId) {
-      const existing = bikes.find((b) => b.id === editingBikeId)!;
+      const existing = bikes.find((b) => b.id === editingBikeId);
+      if (!existing) return;
       saveBike({ ...existing, ...bikeForm });
     } else {
       saveBike(createBike({ ...bikeForm, imageUrl: undefined }));
@@ -145,8 +146,9 @@ export default function GaragePage() {
   const removeBike = (id: string) => {
     if (!confirm("この愛車を削除しますか？")) return;
     deleteBike(id);
-    setSelectedId(null);
-    refresh();
+    const remaining = loadBikes();
+    setBikes(remaining);
+    if (selectedId === id) setSelectedId(remaining.length > 0 ? remaining[0].id : null);
   };
 
   const openAddMaint = () => {
@@ -180,7 +182,8 @@ export default function GaragePage() {
   };
 
   const deleteMaint = (bikeId: string, maintId: string) => {
-    const bike = bikes.find((b) => b.id === bikeId)!;
+    const bike = bikes.find((b) => b.id === bikeId);
+    if (!bike) return;
     saveBike({ ...bike, maintenanceRecords: bike.maintenanceRecords.filter((r) => r.id !== maintId) });
     refresh();
   };
